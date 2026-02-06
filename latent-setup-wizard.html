@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LATENT — Set Up Academy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #fafafa;
+            --bg-deep: #f0f0f2;
+            --bg-card: #ffffff;
+            --bg-input: #f5f5f7;
+            --text: #1d1d1f;
+            --text-secondary: rgba(29, 29, 31, 0.55);
+            --text-tertiary: rgba(29, 29, 31, 0.3);
+            --border: rgba(0, 0, 0, 0.08);
+            --border-focus: rgba(59, 130, 246, 0.4);
+            --shadow: rgba(0, 0, 0, 0.06);
+            --accent: #3b82f6;
+            --accent-soft: rgba(59, 130, 246, 0.08);
+            --accent-medium: rgba(59, 130, 246, 0.15);
+            --btn-bg: #1d1d1f;
+            --btn-text: #ffffff;
+            --glow: rgba(59, 130, 246, 0.15);
+            --success: #22c55e;
+            --success-soft: rgba(34, 197, 94, 0.1);
+            --danger: #ef4444;
+            --danger-soft: rgba(239, 68, 68, 0.1);
+        }
+        
+        [data-theme="dark"] {
+            --bg: #0a0a0a;
+            --bg-deep: #050505;
+            --bg-card: #141414;
+            --bg-input: #1a1a1a;
+            --text: #f5f5f7;
+            --text-secondary: rgba(245, 245, 247, 0.55);
+            --text-tertiary: rgba(245, 245, 247, 0.3);
+            --border: rgba(255, 255, 255, 0.07);
+            --border-focus: rgba(91, 156, 246, 0.4);
+            --shadow: rgba(0, 0, 0, 0.5);
+            --accent: #5b9cf6;
+            --accent-soft: rgba(91, 156, 246, 0.08);
+            --accent-medium: rgba(91, 156, 246, 0.15);
+            --btn-bg: #f5f5f7;
+            --btn-text: #0a0a0a;
+            --glow: rgba(91, 156, 246, 0.1);
+        }
+        
+        html { scroll-behavior: smooth; }
+        
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            transition: background 0.4s ease, color 0.4s ease;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* ============================== */
+        /* TOP BAR                         */
+        /* ============================== */
+
+        .topbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 0 48px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: color-mix(in srgb, var(--bg) 80%, transparent);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .topbar-logo {
+            font-family: 'DM Mono', monospace;
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .topbar-step-label {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            font-weight: 400;
+        }
+
+        .topbar-skip {
+            font-size: 13px;
+            color: var(--text-secondary);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .topbar-skip:hover { background: var(--accent-soft); color: var(--text); }
+
+        /* ============================== */
+        /* PROGRESS BAR                    */
+        /* ============================== */
+
+        .progress-container {
+            position: fixed;
+            top: 64px; left: 0; right: 0;
+            z-index: 99;
+            height: 3px;
+            background: var(--border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 0 2px 2px 0;
+            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* ============================== */
+        /* LAYOUT                          */
+        /* ============================== */
+
+        .wizard-container {
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 120px 24px 80px;
+            min-height: 100vh;
+        }
+
+        /* ============================== */
+        /* STEPS                           */
+        /* ============================== */
+
+        .step {
+            display: none;
+            animation: stepIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .step.active { display: block; }
+
+        @keyframes stepIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-number {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .step-title {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 12px;
+        }
+
+        .step-desc {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-weight: 300;
+            margin-bottom: 40px;
+            max-width: 480px;
+        }
+
+        /* ============================== */
+        /* STEP 1: CONNECT CANVAS          */
+        /* ============================== */
+
+        .canvas-connect-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px;
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-hint {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'DM Mono', monospace;
+            color: var(--text);
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .input-field::placeholder { color: var(--text-tertiary); }
+        .input-field:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .sync-status.idle { display: none; }
+
+        .sync-status.loading {
+            background: var(--accent-soft);
+            color: var(--accent);
+        }
+
+        .sync-status.success {
+            background: var(--success-soft);
+            color: var(--success);
+        }
+
+        .sync-status.error {
+            background: var(--danger-soft);
+            color: var(--danger);
+        }
+
+        .sync-spinner {
+            width: 18px; height: 18px;
+            border: 2px solid var(--accent-soft);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .synced-courses {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .synced-course {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            animation: slideIn 0.3s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .synced-course-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .synced-course-code {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .synced-check {
+            width: 20px; height: 20px;
+            background: var(--success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .synced-check svg { width: 12px; height: 12px; color: white; }
+
+        /* ============================== */
+        /* STEP 2: CLASS TIMES (ALARM UI)  */
+        /* ============================== */
+
+        .course-time-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .course-time-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .course-time-card:hover {
+            border-color: var(--accent-soft);
+        }
+
+        .course-time-header {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .course-time-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .course-time-name {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .course-time-subtitle {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .course-time-toggle {
+            position: relative;
+            width: 48px; height: 28px;
+            background: var(--border);
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+            flex-shrink: 0;
+        }
+
+        .course-time-toggle.on { background: var(--accent); }
+
+        .course-time-toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px; left: 3px;
+            width: 22px; height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        }
+
+        .course-time-toggle.on::after { transform: translateX(20px); }
+
+        .course-time-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .course-time-body.open { max-height: 400px; }
+
+        .course-time-inner {
+            padding: 0 24px 24px;
+        }
+
+        /* Day selector - alarm style */
+        .day-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .day-btn {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .day-btn:hover { border-color: var(--accent); color: var(--accent); }
+        
+        .day-btn.selected {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* Time pickers */
+        .time-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .time-picker-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .time-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 500;
+        }
+
+        .time-picker {
+            padding: 12px 14px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            font-family: 'DM Mono', monospace;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text);
+            text-align: center;
+            outline: none;
+            transition: all 0.2s;
+            width: 100%;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+
+        .time-picker:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+        .time-arrow {
+            color: var(--text-tertiary);
+            font-size: 14px;
+            margin-top: 22px;
+        }
+
+        /* Location */
+        .location-input {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .location-input::placeholder { color: var(--text-tertiary); }
+        .location-input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-soft); }
+
+        .add-time-btn {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 1.5px dashed var(--border);
+            border-radius: 10px;
+            color: var(--text-tertiary);
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 12px;
+        }
+
+        .add-time-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+        /* ============================== */
+        /* STEP 3: UPLOAD SYLLABI          */
+        /* ============================== */
+
+        .syllabus-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .syllabus-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+        }
+
+        .syllabus-card-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .syllabus-icon {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            background: var(--accent-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .syllabus-icon svg { width: 20px; height: 20px; }
+
+        .syllabus-card-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .syllabus-card-info p {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .syllabus-upload-btn {
+            padding: 8px 20px;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .syllabus-upload-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+        .syllabus-upload-btn.uploaded {
+            background: var(--success-soft);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .drop-zone {
+            margin-top: 20px;
+            padding: 40px 24px;
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        .drop-zone-icon {
+            width: 48px; height: 48px;
+            margin: 0 auto 12px;
+            color: var(--text-tertiary);
+        }
+
+        .drop-zone-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .drop-zone-hint {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* ============================== */
+        /* STEP 4: DONE / PREVIEW          */
+        /* ============================== */
+
+        .done-container {
+            text-align: center;
+            padding-top: 40px;
+        }
+
+        .done-icon {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: var(--success-soft);
+            margin: 0 auto 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .done-icon svg { width: 36px; height: 36px; color: var(--success); }
+
+        .done-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 32px 0;
+            text-align: left;
+        }
+
+        .done-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .done-row-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .done-row-value {
+            font-family: 'DM Mono', monospace;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--accent);
+        }
+
+        /* ============================== */
+        /* BUTTONS                         */
+        /* ============================== */
+
+        .wizard-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 40px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 16px 32px;
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            padding: 16px 24px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover { border-color: var(--text-tertiary); color: var(--text); }
+
+        .btn-launch {
+            padding: 18px 48px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 auto;
+        }
+
+        .btn-launch:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 8px 32px var(--glow); }
+
+        /* ============================== */
+        /* RESPONSIVE                      */
+        /* ============================== */
+
+        @media (max-width: 640px) {
+            .topbar { padding: 0 20px; }
+            .wizard-container { padding: 100px 20px 60px; }
+            .canvas-connect-box { padding: 24px; }
+            .course-time-header { padding: 16px 20px; }
+            .course-time-inner { padding: 0 20px 20px; }
+            .day-btn { width: 38px; height: 38px; font-size: 12px; }
+            .wizard-actions { flex-direction: column; }
+            .btn-secondary { order: 1; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="topbar">
+        <a href="#" class="topbar-logo">LATENT</a>
+        <div class="topbar-right">
+            <span class="topbar-step-label" id="stepLabel">Step 1 of 3</span>
+            <button class="topbar-skip" id="skipBtn" onclick="skipStep()">Skip for now</button>
+        </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-container">
+        <div class="progress-fill" id="progressFill" style="width: 33%"></div>
+    </div>
+
+    <!-- Wizard -->
+    <div class="wizard-container">
+
+        <!-- ==================== STEP 1: CONNECT CANVAS ==================== -->
+        <div class="step active" id="step1">
+            <div class="step-number">Step 01</div>
+            <h1 class="step-title">Connect your Canvas</h1>
+            <p class="step-desc">Paste your Canvas access token and we'll pull your courses, assignments, and events automatically.</p>
+
+            <div class="canvas-connect-box">
+                <div class="input-group">
+                    <label class="input-label">Canvas Domain</label>
+                    <p class="input-hint">Your school's Canvas URL, e.g. miamioh.instructure.com</p>
+                    <input type="text" class="input-field" id="canvasDomain" placeholder="yourschool.instructure.com" value="miamioh.instructure.com">
+                </div>
+
+                <div class="input-group" style="margin-bottom: 0;">
+                    <label class="input-label">Access Token</label>
+                    <p class="input-hint">Settings → Account → New Access Token</p>
+                    <input type="password" class="input-field" id="canvasToken" placeholder="Paste your token here...">
+                </div>
+
+                <div class="sync-status idle" id="syncStatus">
+                    <div class="sync-spinner"></div>
+                    <span id="syncText">Syncing your courses...</span>
+                </div>
+            </div>
+
+            <div class="synced-courses" id="syncedCourses"></div>
+
+            <div class="wizard-actions">
+                <button class="btn-primary" id="syncBtn" onclick="syncCanvas()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+                    Sync Canvas
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== STEP 2: CLASS TIMES ==================== -->
+        <div class="step" id="step2">
+            <div class="step-number">Step 02</div>
+            <h1 class="step-title">When do you have class?</h1>
+            <p class="step-desc">Set your weekly schedule — it's like setting an alarm. Toggle on, pick the days and times.</p>
+
+            <div class="course-time-cards" id="courseTimeCards">
+                <!-- Populated by JS after sync -->
+            </div>
+
+            <div class="wizard-actions">
+                <button class="btn-secondary" onclick="goToStep(1)">Back</button>
+                <button class="btn-primary" onclick="goToStep(3)">
+                    Continue
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== STEP 3: UPLOAD SYLLABI ==================== -->
+        <div class="step" id="step3">
+            <div class="step-number">Step 03</div>
+            <h1 class="step-title">Upload your syllabi</h1>
+            <p class="step-desc">Drop in your syllabi and LATENT will map every concept you need to learn this semester. Totally optional — you can do this later.</p>
+
+            <div class="syllabus-cards" id="syllabusCards">
+                <!-- Populated by JS after sync -->
+            </div>
+
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-zone-icon">
+                    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M24 32V16m0 0l-6 6m6-6l6 6" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8 32l.001 2c0 3.312 2.686 6 6 6h19.998c3.314 0 6-2.688 6-6V32" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <p class="drop-zone-text">Drag & drop syllabi here</p>
+                <p class="drop-zone-hint">PDF, DOCX, or TXT — up to 10MB each</p>
+            </div>
+
+            <div class="wizard-actions">
+                <button class="btn-secondary" onclick="goToStep(2)">Back</button>
+                <button class="btn-primary" onclick="goToStep(4)">
+                    Finish Setup
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== STEP 4: DONE ==================== -->
+        <div class="step" id="step4">
+            <div class="done-container">
+                <div class="done-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="step-title" style="text-align:center;">You're all set.</div>
+                <p class="step-desc" style="text-align:center; margin: 0 auto 0;">Academy is ready. Your courses are synced, your schedule is set, and your learning journey starts now.</p>
+
+                <div class="done-summary" id="doneSummary">
+                    <!-- Populated by JS -->
+                </div>
+
+                <button class="btn-launch" onclick="launchAcademy()">
+                    Launch Academy
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ============================================================
+        // STATE
+        // ============================================================
+        
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        // Demo courses (replace with real Canvas sync data)
+        const demoCourses = [
+            { id: 1, name: 'Hybrid Studio', code: 'ARC 301/402', color: '#3b82f6' },
+            { id: 2, name: 'Latin American Modern Architecture', code: 'ARC 424/524', color: '#8b5cf6' },
+            { id: 3, name: 'Construction Methods', code: 'ARC 418/518', color: '#f59e0b' },
+            { id: 4, name: 'Political Science', code: 'POL 201', color: '#22c55e' },
+        ];
+
+        // ============================================================
+        // NAVIGATION
+        // ============================================================
+
+        function goToStep(step) {
+            // Hide current
+            document.querySelectorAll('.step').forEach(s => {
+                s.classList.remove('active');
+            });
+
+            currentStep = step;
+
+            // Show target
+            const target = document.getElementById(`step${step}`);
+            target.classList.add('active');
+
+            // Update progress
+            const progress = step > totalSteps ? 100 : (step / totalSteps) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            // Update label
+            if (step <= totalSteps) {
+                document.getElementById('stepLabel').textContent = `Step ${step} of ${totalSteps}`;
+                document.getElementById('skipBtn').style.display = 'block';
+            } else {
+                document.getElementById('stepLabel').textContent = 'Setup complete';
+                document.getElementById('skipBtn').style.display = 'none';
+            }
+        }
+
+        function skipStep() {
+            if (currentStep < totalSteps) {
+                goToStep(currentStep + 1);
+            } else {
+                goToStep(4);
+            }
+        }
+
+        // ============================================================
+        // STEP 1: CANVAS SYNC
+        // ============================================================
+
+        function syncCanvas() {
+            const domain = document.getElementById('canvasDomain').value;
+            const token = document.getElementById('canvasToken').value;
+
+            if (!domain || !token) {
+                shakeElement(document.getElementById('canvasToken'));
+                return;
+            }
+
+            const status = document.getElementById('syncStatus');
+            const text = document.getElementById('syncText');
+            const btn = document.getElementById('syncBtn');
+
+            // Loading state
+            status.className = 'sync-status loading';
+            text.textContent = 'Syncing your courses...';
+            btn.disabled = true;
+
+            // Simulate sync (replace with real API call)
+            setTimeout(() => {
+                text.textContent = 'Pulling assignments and events...';
+            }, 1000);
+
+            setTimeout(() => {
+                status.className = 'sync-status success';
+                status.innerHTML = `
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Synced! Found ${demoCourses.length} courses, 24 assignments, 11 events</span>
+                `;
+                btn.disabled = false;
+                btn.innerHTML = `Continue <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
+                btn.onclick = () => goToStep(2);
+
+                // Show synced courses
+                renderSyncedCourses();
+                // Pre-populate step 2 and 3
+                renderCourseTimeCards();
+                renderSyllabusCards();
+            }, 2200);
+        }
+
+        function renderSyncedCourses() {
+            const container = document.getElementById('syncedCourses');
+            demoCourses.forEach((course, i) => {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'synced-course';
+                    el.style.animationDelay = `${i * 0.1}s`;
+                    el.innerHTML = `
+                        <div>
+                            <div class="synced-course-name">${course.name}</div>
+                            <div class="synced-course-code">${course.code}</div>
+                        </div>
+                        <div class="synced-check">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                        </div>
+                    `;
+                    container.appendChild(el);
+                }, i * 150);
+            });
+        }
+
+        // ============================================================
+        // STEP 2: CLASS TIMES
+        // ============================================================
+
+        function renderCourseTimeCards() {
+            const container = document.getElementById('courseTimeCards');
+            container.innerHTML = '';
+
+            demoCourses.forEach((course) => {
+                const card = document.createElement('div');
+                card.className = 'course-time-card';
+                card.innerHTML = `
+                    <div class="course-time-header" onclick="toggleCourseTime(this)">
+                        <div class="course-time-info">
+                            <div class="course-time-name">${course.code}</div>
+                            <div class="course-time-subtitle">${course.name}</div>
+                        </div>
+                        <button class="course-time-toggle" onclick="event.stopPropagation(); toggleSwitch(this)"></button>
+                    </div>
+                    <div class="course-time-body">
+                        <div class="course-time-inner">
+                            <div class="day-selector">
+                                <button class="day-btn" onclick="toggleDay(this)">M</button>
+                                <button class="day-btn" onclick="toggleDay(this)">T</button>
+                                <button class="day-btn" onclick="toggleDay(this)">W</button>
+                                <button class="day-btn" onclick="toggleDay(this)">Th</button>
+                                <button class="day-btn" onclick="toggleDay(this)">F</button>
+                            </div>
+                            <div class="time-row">
+                                <div class="time-picker-wrap">
+                                    <span class="time-label">Start</span>
+                                    <input type="time" class="time-picker" value="10:00">
+                                </div>
+                                <span class="time-arrow">→</span>
+                                <div class="time-picker-wrap">
+                                    <span class="time-label">End</span>
+                                    <input type="time" class="time-picker" value="11:50">
+                                </div>
+                            </div>
+                            <input type="text" class="location-input" placeholder="Room / building (optional)">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleCourseTime(header) {
+            const body = header.nextElementSibling;
+            const toggle = header.querySelector('.course-time-toggle');
+            body.classList.toggle('open');
+            toggle.classList.toggle('on');
+        }
+
+        function toggleSwitch(btn) {
+            btn.classList.toggle('on');
+            const body = btn.closest('.course-time-card').querySelector('.course-time-body');
+            body.classList.toggle('open');
+        }
+
+        function toggleDay(btn) {
+            btn.classList.toggle('selected');
+        }
+
+        // ============================================================
+        // STEP 3: SYLLABI
+        // ============================================================
+
+        function renderSyllabusCards() {
+            const container = document.getElementById('syllabusCards');
+            container.innerHTML = '';
+
+            demoCourses.forEach((course) => {
+                const card = document.createElement('div');
+                card.className = 'syllabus-card';
+                card.innerHTML = `
+                    <div class="syllabus-card-left">
+                        <div class="syllabus-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <div class="syllabus-card-info">
+                            <h4>${course.code}</h4>
+                            <p>${course.name}</p>
+                        </div>
+                    </div>
+                    <button class="syllabus-upload-btn" onclick="simulateUpload(this)">Upload</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function simulateUpload(btn) {
+            btn.textContent = 'Parsing...';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.textContent = '✓ Uploaded';
+                btn.classList.add('uploaded');
+                btn.disabled = false;
+            }, 1500);
+        }
+
+        // Drop zone
+        const dropZone = document.getElementById('dropZone');
+        if (dropZone) {
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            });
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('drag-over');
+            });
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+                dropZone.innerHTML = `
+                    <div class="drop-zone-icon" style="color: var(--success);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <p class="drop-zone-text" style="color: var(--success);">Files received!</p>
+                    <p class="drop-zone-hint">Processing syllabi...</p>
+                `;
+            });
+        }
+
+        // ============================================================
+        // STEP 4: DONE
+        // ============================================================
+
+        // Populate summary when reaching step 4
+        const originalGoToStep = goToStep;
+        goToStep = function(step) {
+            originalGoToStep(step);
+            if (step === 4) {
+                const summary = document.getElementById('doneSummary');
+                summary.innerHTML = `
+                    <div class="done-row">
+                        <span class="done-row-label">Courses synced</span>
+                        <span class="done-row-value">${demoCourses.length}</span>
+                    </div>
+                    <div class="done-row">
+                        <span class="done-row-label">Assignments pulled</span>
+                        <span class="done-row-value">24</span>
+                    </div>
+                    <div class="done-row">
+                        <span class="done-row-label">Events tracked</span>
+                        <span class="done-row-value">11</span>
+                    </div>
+                    <div class="done-row">
+                        <span class="done-row-label">Class times set</span>
+                        <span class="done-row-value">${document.querySelectorAll('.course-time-toggle.on').length} / ${demoCourses.length}</span>
+                    </div>
+                `;
+            }
+        };
+
+        function launchAcademy() {
+            // Replace with your actual Academy route
+            window.location.href = '/dashboard';
+        }
+
+        // ============================================================
+        // UTILS
+        // ============================================================
+
+        function shakeElement(el) {
+            el.style.animation = 'none';
+            el.offsetHeight; // trigger reflow
+            el.style.animation = 'shake 0.4s ease';
+            el.style.borderColor = 'var(--danger)';
+            setTimeout(() => { el.style.borderColor = ''; }, 1500);
+        }
+
+        // Add shake keyframes
+        const shakeStyle = document.createElement('style');
+        shakeStyle.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                20% { transform: translateX(-6px); }
+                40% { transform: translateX(6px); }
+                60% { transform: translateX(-4px); }
+                80% { transform: translateX(4px); }
+            }
+        `;
+        document.head.appendChild(shakeStyle);
+    </script>
+</body>
+</html>
