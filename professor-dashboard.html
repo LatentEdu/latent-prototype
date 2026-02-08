@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LATENT — Professor Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --fs-xs: clamp(9px, 0.3vw + 5px, 11px);
+            --fs-sm: clamp(11px, 0.2vw + 7px, 13px);
+            --fs-base: clamp(12px, 0.2vw + 8px, 14px);
+            --fs-md: clamp(13px, 0.25vw + 8px, 15px);
+            --fs-lg: clamp(14px, 0.3vw + 9px, 17px);
+            --fs-xl: clamp(17px, 0.4vw + 10px, 21px);
+            --fs-2xl: clamp(21px, 0.5vw + 12px, 26px);
+            --fs-3xl: clamp(26px, 0.6vw + 14px, 34px);
+            --sp-4: clamp(3px, 0.15vw + 2px, 5px);
+            --sp-8: clamp(7px, 0.2vw + 4px, 10px);
+            --sp-12: clamp(10px, 0.25vw + 6px, 14px);
+            --sp-16: clamp(14px, 0.3vw + 8px, 18px);
+            --sp-20: clamp(16px, 0.4vw + 10px, 22px);
+            --sp-24: clamp(20px, 0.4vw + 12px, 26px);
+            --sp-32: clamp(24px, 0.6vw + 14px, 34px);
+            --r-sm: clamp(5px, 0.15vw + 3px, 7px);
+            --r-md: clamp(8px, 0.2vw + 5px, 11px);
+            --r-lg: clamp(10px, 0.3vw + 6px, 14px);
+            --r-xl: clamp(12px, 0.4vw + 7px, 18px);
+        }
+        
+        [data-theme="clear"] {
+            --bg: #f5f5f7;
+            --bg-card: #ffffff;
+            --text: #1d1d1f;
+            --text-secondary: rgba(29, 29, 31, 0.5);
+            --text-tertiary: rgba(29, 29, 31, 0.35);
+            --border: rgba(0, 0, 0, 0.06);
+            --shadow: rgba(0, 0, 0, 0.08);
+            --btn-bg: #1d1d1f;
+            --btn-text: #ffffff;
+            --badge-bg: rgba(29, 29, 31, 0.05);
+            --accent: #1d1d1f;
+            --accent-light: rgba(29, 29, 31, 0.1);
+        }
+        [data-theme="deep"] {
+            --bg: #0a0a0a;
+            --bg-card: #161616;
+            --text: #f5f5f7;
+            --text-secondary: rgba(245, 245, 247, 0.5);
+            --text-tertiary: rgba(245, 245, 247, 0.35);
+            --border: rgba(255, 255, 255, 0.08);
+            --shadow: rgba(0, 0, 0, 0.4);
+            --btn-bg: #f5f5f7;
+            --btn-text: #0a0a0a;
+            --badge-bg: rgba(245, 245, 247, 0.08);
+            --accent: #f5f5f7;
+            --accent-light: rgba(245, 245, 247, 0.1);
+        }
+        [data-theme="emerge"] {
+            --bg: #1a1215;
+            --bg-card: #2d1f24;
+            --text: #f5f0f1;
+            --text-secondary: rgba(245, 240, 241, 0.6);
+            --text-tertiary: rgba(245, 240, 241, 0.35);
+            --border: rgba(232, 121, 149, 0.15);
+            --shadow: rgba(0, 0, 0, 0.4);
+            --btn-bg: #e87995;
+            --btn-text: #1a1215;
+            --badge-bg: rgba(232, 121, 149, 0.12);
+            --accent: #e87995;
+            --accent-light: rgba(232, 121, 149, 0.15);
+        }
+        [data-theme="grow"] {
+            --bg: #0d1a12;
+            --bg-card: #152417;
+            --text: #e8f5e9;
+            --text-secondary: rgba(232, 245, 233, 0.6);
+            --text-tertiary: rgba(232, 245, 233, 0.35);
+            --border: rgba(76, 175, 80, 0.15);
+            --shadow: rgba(0, 0, 0, 0.4);
+            --btn-bg: #4caf50;
+            --btn-text: #0d1a12;
+            --badge-bg: rgba(76, 175, 80, 0.12);
+            --accent: #4caf50;
+            --accent-light: rgba(76, 175, 80, 0.15);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+        
+        .professor-layout {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Left sidebar */
+        .prof-sidebar {
+            width: clamp(200px, 16vw, 260px);
+            flex-shrink: 0;
+            border-right: 1px solid var(--border);
+            background: color-mix(in srgb, var(--bg-card) 60%, var(--bg));
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .prof-sidebar-logo {
+            padding: var(--sp-20) var(--sp-24);
+            font-size: var(--fs-xl);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            border-bottom: 1px solid var(--border);
+        }
+        .prof-sidebar-nav {
+            padding: var(--sp-16) 0;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .prof-nav-label {
+            font-size: var(--fs-xs);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-tertiary);
+            padding: 0 var(--sp-20);
+            margin-bottom: var(--sp-8);
+        }
+        .prof-nav-item {
+            display: flex;
+            align-items: center;
+            gap: var(--sp-12);
+            padding: var(--sp-10) var(--sp-20);
+            font-size: var(--fs-base);
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.2s, background 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .prof-nav-item:hover { color: var(--text); background: var(--badge-bg); }
+        .prof-nav-item.active { color: var(--text); background: var(--accent-light); border-left-color: var(--accent); }
+        .prof-nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.8; }
+        .prof-course-list {
+            padding: 0 var(--sp-12);
+            margin-top: var(--sp-8);
+        }
+        .prof-course-chip {
+            padding: var(--sp-8) var(--sp-12);
+            font-size: var(--fs-sm);
+            border-radius: var(--r-md);
+            margin-bottom: var(--sp-4);
+            cursor: pointer;
+            background: var(--badge-bg);
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+        .prof-course-chip:hover { border-color: var(--border); }
+        .prof-course-chip.active { background: var(--accent-light); border-color: var(--accent); color: var(--text); }
+        .prof-course-chip .code { color: var(--text-tertiary); font-size: var(--fs-xs); }
+        
+        /* Main area */
+        .prof-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            overflow: hidden;
+        }
+        .prof-topbar {
+            flex-shrink: 0;
+            padding: var(--sp-16) var(--sp-24);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: color-mix(in srgb, var(--bg-card) 50%, transparent);
+            backdrop-filter: blur(12px);
+        }
+        .prof-topbar-left { display: flex; align-items: center; gap: var(--sp-20); }
+        .prof-course-title { font-size: var(--fs-lg); font-weight: 600; }
+        .prof-course-meta { font-size: var(--fs-sm); color: var(--text-tertiary); margin-top: 2px; }
+        .prof-topbar-right { display: flex; align-items: center; gap: var(--sp-12); }
+        .prof-theme-select {
+            padding: var(--sp-6) var(--sp-10);
+            font-size: var(--fs-sm);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r-md);
+            color: var(--text);
+            cursor: pointer;
+        }
+        .prof-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: var(--btn-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: var(--fs-sm);
+        }
+        
+        .prof-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--sp-24);
+        }
+        
+        .prof-screen { display: none; }
+        .prof-screen.active { display: block; animation: fadeIn 0.35s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Screen 1: Course Overview */
+        .overview-header { margin-bottom: var(--sp-24); }
+        .overview-header h1 { font-size: var(--fs-2xl); font-weight: 700; letter-spacing: -0.02em; }
+        .overview-header p { font-size: var(--fs-base); color: var(--text-secondary); margin-top: var(--sp-4); }
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--sp-24);
+        }
+        @media (max-width: 900px) { .overview-grid { grid-template-columns: 1fr; } }
+        .overview-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r-xl);
+            padding: var(--sp-24);
+            transition: box-shadow 0.2s;
+        }
+        .overview-card:hover { box-shadow: 0 8px 24px var(--shadow); }
+        .overview-card-title { font-size: var(--fs-sm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); margin-bottom: var(--sp-16); }
+        
+        /* Class meter */
+        .class-meter-wrap { display: flex; align-items: center; gap: var(--sp-24); flex-wrap: wrap; }
+        .class-meter-circle {
+            width: 140px; height: 140px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .class-meter-circle.green { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .class-meter-circle.blue { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .class-meter-circle.yellow { background: rgba(234, 179, 8, 0.2); color: #eab308; }
+        .class-meter-circle.red { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .class-meter-info { flex: 1; min-width: 0; }
+        .class-meter-trend { display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-sm); font-weight: 600; margin-top: var(--sp-4); }
+        .class-meter-trend.up { color: #22c55e; }
+        .class-meter-trend.down { color: #ef4444; }
+        
+        /* Distribution bar */
+        .dist-bars { display: flex; flex-direction: column; gap: var(--sp-12); }
+        .dist-row { display: flex; align-items: center; gap: var(--sp-12); font-size: var(--fs-sm); }
+        .dist-label { width: 100px; color: var(--text-secondary); }
+        .dist-bar-wrap { flex: 1; height: 24px; background: var(--badge-bg); border-radius: var(--r-sm); overflow: hidden; display: flex; }
+        .dist-bar { height: 100%; border-radius: var(--r-sm); transition: width 0.4s ease; }
+        .dist-count { width: 60px; text-align: right; font-weight: 600; color: var(--text-tertiary); }
+        
+        /* Topic health */
+        .topic-health-list { display: flex; flex-direction: column; gap: var(--sp-8); }
+        .topic-health-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--sp-10) var(--sp-12);
+            background: var(--badge-bg);
+            border-radius: var(--r-md);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .topic-health-item:hover { background: var(--accent-light); }
+        .topic-health-item .name { font-weight: 500; }
+        .topic-health-item .pct { font-size: var(--fs-sm); font-weight: 600; }
+        .topic-health-item .pct.hi { color: #22c55e; }
+        .topic-health-item .pct.mid { color: #eab308; }
+        .topic-health-item .pct.lo { color: #ef4444; }
+        
+        /* Needs attention */
+        .attention-list { display: flex; flex-direction: column; gap: var(--sp-8); }
+        .attention-item {
+            padding: var(--sp-12);
+            background: var(--badge-bg);
+            border-left: 3px solid #f59e0b;
+            border-radius: var(--r-md);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .attention-item.critical { border-left-color: #ef4444; }
+        .attention-item:hover { background: var(--accent-light); }
+        .attention-item .name { font-weight: 600; margin-bottom: 2px; }
+        .attention-item .gap { font-size: var(--fs-sm); color: var(--text-tertiary); }
+        .attention-item .score { font-size: var(--fs-xs); font-weight: 700; color: #f59e0b; margin-top: 4px; }
+        .attention-item.critical .score { color: #ef4444; }
+        .btn-send-rec { margin-top: var(--sp-8); font-size: var(--fs-sm); padding: var(--sp-6) var(--sp-12); background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: var(--r-md); cursor: pointer; transition: opacity 0.2s; }
+        .btn-send-rec:hover { opacity: 0.9; }
+        
+        /* Recent activity */
+        .activity-list { display: flex; flex-direction: column; gap: var(--sp-8); }
+        .activity-item { font-size: var(--fs-sm); color: var(--text-secondary); padding: var(--sp-6) 0; border-bottom: 1px solid var(--border); }
+        .activity-item:last-child { border-bottom: none; }
+        
+        /* Screen 2: Roster */
+        .roster-toolbar { display: flex; flex-wrap: wrap; gap: var(--sp-12); margin-bottom: var(--sp-20); align-items: center; }
+        .roster-toolbar select, .roster-toolbar input {
+            padding: var(--sp-8) var(--sp-12);
+            font-size: var(--fs-sm);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--r-md);
+            color: var(--text);
+        }
+        .roster-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--r-xl); background: var(--bg-card); }
+        .roster-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+        .roster-table th, .roster-table td { padding: var(--sp-12) var(--sp-16); text-align: left; border-bottom: 1px solid var(--border); }
+        .roster-table th { font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
+        .roster-table tr:last-child td { border-bottom: none; }
+        .roster-table tr:hover td { background: var(--badge-bg); }
+        .roster-table tr.clickable { cursor: pointer; }
+        .score-cell { font-weight: 600; }
+        .score-cell.hi { color: #22c55e; }
+        .score-cell.mid { color: #eab308; }
+        .score-cell.lo { color: #ef4444; }
+        .trend-up { color: #22c55e; }
+        .trend-down { color: #ef4444; }
+        .trend-stable { color: var(--text-tertiary); }
+        .mismatch-badge { font-size: 10px; padding: 2px 6px; background: #f59e0b; color: #1d1d1f; border-radius: var(--r-sm); font-weight: 700; margin-left: 4px; }
+        
+        /* Screen 3: Student detail */
+        .student-detail-back { display: inline-flex; align-items: center; gap: var(--sp-8); font-size: var(--fs-base); color: var(--text-secondary); cursor: pointer; margin-bottom: var(--sp-24); transition: color 0.2s; }
+        .student-detail-back:hover { color: var(--text); }
+        .student-header {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--sp-24);
+            margin-bottom: var(--sp-32);
+            padding-bottom: var(--sp-24);
+            border-bottom: 1px solid var(--border);
+        }
+        .student-avatar-lg { width: 72px; height: 72px; border-radius: 50%; background: var(--accent); color: var(--btn-text); display: flex; align-items: center; justify-content: center; font-size: var(--fs-2xl); font-weight: 600; flex-shrink: 0; }
+        .student-header-info { flex: 1; min-width: 0; }
+        .student-header-name { font-size: var(--fs-2xl); font-weight: 700; margin-bottom: var(--sp-4); }
+        .student-header-meta { font-size: var(--fs-sm); color: var(--text-tertiary); margin-bottom: var(--sp-12); }
+        .student-header-score { font-size: var(--fs-3xl); font-weight: 700; }
+        .student-header-score.green { color: #22c55e; }
+        .student-header-score.blue { color: #3b82f6; }
+        .student-header-score.yellow { color: #eab308; }
+        .student-header-score.red { color: #ef4444; }
+        .student-section { margin-bottom: var(--sp-32); }
+        .student-section-title { font-size: var(--fs-base); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); margin-bottom: var(--sp-16); }
+        .timeline-chart { height: 120px; background: var(--badge-bg); border-radius: var(--r-md); padding: var(--sp-16); display: flex; align-items: flex-end; gap: 4px; }
+        .timeline-bar { flex: 1; min-width: 4px; background: var(--accent); border-radius: 2px; transition: height 0.3s; }
+        .topic-radar-wrap { display: flex; flex-wrap: wrap; gap: var(--sp-12); }
+        .topic-chip { padding: var(--sp-8) var(--sp-16); background: var(--badge-bg); border-radius: 100px; font-size: var(--fs-sm); display: inline-flex; align-items: center; gap: var(--sp-8); }
+        .topic-chip .pct { font-weight: 700; }
+        .session-list { display: flex; flex-direction: column; gap: var(--sp-8); }
+        .session-item { padding: var(--sp-12); background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-md); }
+        .session-item .when { font-size: var(--fs-xs); color: var(--text-tertiary); margin-bottom: 4px; }
+        .session-item .topic { font-weight: 600; margin-bottom: 4px; }
+        .session-item .aha { font-size: var(--fs-sm); color: var(--text-secondary); font-style: italic; margin-top: 6px; padding-left: 8px; border-left: 2px solid var(--accent); }
+        .recommended-actions { display: flex; flex-wrap: wrap; gap: var(--sp-12); }
+        .btn-action { padding: var(--sp-10) var(--sp-16); font-size: var(--fs-base); background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: var(--r-md); cursor: pointer; transition: opacity 0.2s; }
+        .btn-action:hover { opacity: 0.9; }
+        .btn-action.secondary { background: var(--badge-bg); color: var(--text); border: 1px solid var(--border); }
+    </style>
+</head>
+<body data-theme="deep">
+    <div class="professor-layout">
+        <aside class="prof-sidebar">
+            <div class="prof-sidebar-logo">LATENT</div>
+            <nav class="prof-sidebar-nav">
+                <div class="prof-nav-label">Course</div>
+                <div class="prof-course-list" id="course-list"></div>
+                <div class="prof-nav-label" style="margin-top: var(--sp-20);">Navigation</div>
+                <div class="prof-nav-item active" data-screen="overview">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                    Overview
+                </div>
+                <div class="prof-nav-item" data-screen="roster">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                    Student Roster
+                </div>
+                <div class="prof-nav-item" data-screen="insights">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                    Insights
+                </div>
+            </nav>
+        </aside>
+        <main class="prof-main">
+            <header class="prof-topbar">
+                <div class="prof-topbar-left">
+                    <div>
+                        <div class="prof-course-title" id="topbar-course-name">POL 241 — Political Theory</div>
+                        <div class="prof-course-meta" id="topbar-course-meta">Spring 2026 · 28 students</div>
+                    </div>
+                </div>
+                <div class="prof-topbar-right">
+                    <select class="prof-theme-select" id="theme-select" aria-label="Theme">
+                        <option value="deep">Deep</option>
+                        <option value="clear">Clear</option>
+                        <option value="emerge">Emerge</option>
+                        <option value="grow">Grow</option>
+                    </select>
+                    <div class="prof-avatar" id="prof-avatar">JD</div>
+                </div>
+            </header>
+            <div class="prof-content">
+                <!-- Screen 1: Course Overview -->
+                <section class="prof-screen active" id="screen-overview">
+                    <div class="overview-header">
+                        <h1>Course Overview</h1>
+                        <p>At-a-glance health of your class</p>
+                    </div>
+                    <div class="overview-grid">
+                        <div class="overview-card">
+                            <div class="overview-card-title">Class Understanding Meter</div>
+                            <div class="class-meter-wrap">
+                                <div class="class-meter-circle blue" id="class-meter-circle">72</div>
+                                <div class="class-meter-info">
+                                    <div>Class average LATENT Score</div>
+                                    <div class="class-meter-trend up" id="class-meter-trend">↑ 4 points from last week</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overview-card">
+                            <div class="overview-card-title">Understanding Distribution</div>
+                            <div class="dist-bars" id="dist-bars"></div>
+                        </div>
+                        <div class="overview-card">
+                            <div class="overview-card-title">Topic Health Map</div>
+                            <div class="topic-health-list" id="topic-health-list"></div>
+                        </div>
+                        <div class="overview-card">
+                            <div class="overview-card-title">Needs Attention</div>
+                            <div class="attention-list" id="attention-list"></div>
+                        </div>
+                        <div class="overview-card" style="grid-column: 1 / -1;">
+                            <div class="overview-card-title">Recent Activity</div>
+                            <div class="activity-list" id="activity-list"></div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Screen 2: Student Roster -->
+                <section class="prof-screen" id="screen-roster">
+                    <div class="overview-header">
+                        <h1>Student Roster</h1>
+                        <p>LATENT Score, trend, and gaps for every student</p>
+                    </div>
+                    <div class="roster-toolbar">
+                        <select id="filter-score" aria-label="Score range">
+                            <option value="">All scores</option>
+                            <option value="below50">Below 50</option>
+                            <option value="50-60">50–60</option>
+                            <option value="60-80">60–80</option>
+                            <option value="above80">Above 80</option>
+                        </select>
+                        <select id="filter-trend" aria-label="Trend">
+                            <option value="">All trends</option>
+                            <option value="down">Declining</option>
+                            <option value="stable">Stable</option>
+                            <option value="up">Rising</option>
+                        </select>
+                        <select id="filter-topic" aria-label="Topic">
+                            <option value="">All topics</option>
+                        </select>
+                        <input type="text" id="filter-search" placeholder="Search students..." style="min-width: 180px;">
+                    </div>
+                    <div class="roster-table-wrap">
+                        <table class="roster-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>LATENT Score</th>
+                                    <th>Trend</th>
+                                    <th>Sessions (wk)</th>
+                                    <th>Last Active</th>
+                                    <th>Canvas Grade</th>
+                                    <th>Gap</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roster-tbody"></tbody>
+                        </table>
+                    </div>
+                </section>
+                <!-- Screen 3: Individual Student -->
+                <section class="prof-screen" id="screen-student">
+                    <button type="button" class="student-detail-back" id="student-detail-back">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                        Back to Roster
+                    </button>
+                    <div class="student-header" id="student-header"></div>
+                    <div class="student-section">
+                        <div class="student-section-title">Understanding Over Time</div>
+                        <div class="timeline-chart" id="timeline-chart"></div>
+                    </div>
+                    <div class="student-section">
+                        <div class="student-section-title">Topic Breakdown</div>
+                        <div class="topic-radar-wrap" id="topic-radar"></div>
+                    </div>
+                    <div class="student-section">
+                        <div class="student-section-title">Session History & Aha Moments</div>
+                        <div class="session-list" id="session-list"></div>
+                    </div>
+                    <div class="student-section">
+                        <div class="student-section-title">Recommended Actions</div>
+                        <div class="recommended-actions">
+                            <button type="button" class="btn-action">Send study recommendation</button>
+                            <button type="button" class="btn-action secondary">Create targeted assignment</button>
+                        </div>
+                    </div>
+                </section>
+                <!-- Screen 4: Insights placeholder -->
+                <section class="prof-screen" id="screen-insights">
+                    <div class="overview-header">
+                        <h1>Insights & Analytics</h1>
+                        <p>Understanding over time, top misconceptions, at-risk report</p>
+                    </div>
+                    <div class="overview-card" style="max-width: 560px;">
+                        <div class="overview-card-title">Coming in Phase 3</div>
+                        <p style="color: var(--text-secondary); font-size: var(--fs-base);">Top Misconceptions, Understanding Over Time chart, At-Risk identification, and Canvas grade vs LATENT score mismatch flagging will appear here.</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script>
+        (function() {
+            const MOCK_COURSES = [
+                { id: 'pol241', name: 'Political Theory', code: 'POL 241', semester: 'Spring 2026', studentCount: 28 },
+                { id: 'arc418', name: 'Latin American Architecture', code: 'ARC 418', semester: 'Spring 2026', studentCount: 22 }
+            ];
+            const MOCK_TOPICS = [
+                { name: 'Social Contract Theory', week: 1, classAvg: 78 },
+                { name: "Plato's Republic", week: 2, classAvg: 71 },
+                { name: 'Hobbes & Locke', week: 3, classAvg: 52 },
+                { name: 'Rousseau', week: 4, classAvg: 41 }
+            ];
+            const MOCK_STUDENTS = [
+                { id: 's1', name: 'Sarah Martinez', score: 38, trend: 'down', sessionsThisWeek: 0, lastActive: '3 days ago', canvasGrade: 'B-', gap: 'Hobbes vs Locke', mismatch: false },
+                { id: 's2', name: 'James Kim', score: 82, trend: 'up', sessionsThisWeek: 4, lastActive: 'Today', canvasGrade: 'A-', gap: 'None', mismatch: false },
+                { id: 's3', name: 'Aisha Rahman', score: 56, trend: 'stable', sessionsThisWeek: 2, lastActive: 'Yesterday', canvasGrade: 'C+', gap: 'Rousseau', mismatch: false },
+                { id: 's4', name: 'Marcus Webb', score: 91, trend: 'up', sessionsThisWeek: 5, lastActive: 'Today', canvasGrade: 'A', gap: 'None', mismatch: false },
+                { id: 's5', name: 'Elena Vasquez', score: 44, trend: 'down', sessionsThisWeek: 1, lastActive: '5 days ago', canvasGrade: 'A-', gap: 'Locke property rights', mismatch: true },
+                { id: 's6', name: 'David Park', score: 67, trend: 'up', sessionsThisWeek: 3, lastActive: 'Today', canvasGrade: 'B+', gap: 'None', mismatch: false },
+                { id: 's7', name: 'Jordan Taylor', score: 29, trend: 'down', sessionsThisWeek: 0, lastActive: '1 week ago', canvasGrade: 'C', gap: 'Social contract basics', mismatch: false }
+            ];
+            const MOCK_DISTRIBUTION = [
+                { label: '80–100', count: 12, color: '#22c55e' },
+                { label: '60–80', count: 8, color: '#3b82f6' },
+                { label: '40–60', count: 5, color: '#eab308' },
+                { label: '0–40', count: 3, color: '#ef4444' }
+            ];
+            const MOCK_ATTENTION = [
+                { name: 'Sarah Martinez', score: 38, trend: 'down', gap: 'Cannot connect Locke to modern property rights', critical: true },
+                { name: 'Elena Vasquez', score: 44, trend: 'down', gap: 'High Canvas grade, low understanding — surface learner', critical: false },
+                { name: 'Jordan Taylor', score: 29, trend: 'down', gap: 'Struggling with social contract basics', critical: true }
+            ];
+            const MOCK_ACTIVITY = [
+                '15 students completed Deep Dive sessions this week',
+                '3 students hit "I Don\'t Know" on Rousseau\'s General Will',
+                'Class engagement up 12% since Tuesday'
+            ];
+            const MOCK_STUDENT_DETAIL = {
+                s1: {
+                    timeline: [32, 35, 38, 36, 38],
+                    topicScores: [{ name: 'Social Contract', pct: 45 }, { name: "Plato's Republic", pct: 52 }, { name: 'Hobbes & Locke', pct: 28 }, { name: 'Rousseau', pct: 31 }],
+                    sessions: [
+                        { when: 'Feb 5, 2:30 PM', topic: 'Hobbes & Locke', duration: '12 min', aha: 'At 2:38pm, Sarah connected Locke\'s labor theory to modern IP — then admitted she still confuses state of nature with both thinkers.' },
+                        { when: 'Feb 2, 11:00 AM', topic: "Plato's Republic", duration: '8 min', aha: null }
+                    ]
+                },
+                s2: {
+                    timeline: [72, 75, 78, 80, 82],
+                    topicScores: [{ name: 'Social Contract', pct: 88 }, { name: "Plato's Republic", pct: 85 }, { name: 'Hobbes & Locke', pct: 82 }, { name: 'Rousseau', pct: 78 }],
+                    sessions: [
+                        { when: 'Feb 6, 4:15 PM', topic: 'Rousseau', duration: '15 min', aha: 'At 4:22pm, James correctly derived the difference between positive and negative liberty without prompting.' }
+                    ]
+                }
+            };
+            function getStudentDetail(id) {
+                return MOCK_STUDENT_DETAIL[id] || MOCK_STUDENT_DETAIL.s1;
+            }
+
+            let currentCourseId = MOCK_COURSES[0].id;
+            let currentCourse = () => MOCK_COURSES.find(c => c.id === currentCourseId) || MOCK_COURSES[0];
+            let rosterFiltered = [...MOCK_STUDENTS];
+
+            function scoreClass(score) {
+                if (score >= 81) return 'hi';
+                if (score >= 61) return 'mid';
+                if (score >= 41) return 'mid';
+                return 'lo';
+            }
+            function meterColor(score) {
+                if (score >= 81) return 'green';
+                if (score >= 61) return 'blue';
+                if (score >= 41) return 'yellow';
+                return 'red';
+            }
+
+            function renderCourseList() {
+                const el = document.getElementById('course-list');
+                el.innerHTML = MOCK_COURSES.map(c => `
+                    <div class="prof-course-chip ${c.id === currentCourseId ? 'active' : ''}" data-course="${c.id}">
+                        ${c.code}<br><span class="code">${c.name}</span>
+                    </div>
+                `).join('');
+                el.querySelectorAll('.prof-course-chip').forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        currentCourseId = chip.dataset.course;
+                        renderCourseList();
+                        updateTopbar();
+                        renderOverview();
+                        renderRoster();
+                    });
+                });
+            }
+            function updateTopbar() {
+                const c = currentCourse();
+                document.getElementById('topbar-course-name').textContent = `${c.code} — ${c.name}`;
+                document.getElementById('topbar-course-meta').textContent = `${c.semester} · ${c.studentCount} students`;
+            }
+            function renderOverview() {
+                const avg = 72;
+                const circle = document.getElementById('class-meter-circle');
+                circle.textContent = avg;
+                circle.className = 'class-meter-circle ' + meterColor(avg);
+                document.getElementById('class-meter-trend').textContent = '↑ 4 points from last week';
+                document.getElementById('dist-bars').innerHTML = MOCK_DISTRIBUTION.map(d => {
+                    const pct = (d.count / 28) * 100;
+                    return `<div class="dist-row"><span class="dist-label">${d.label}</span><div class="dist-bar-wrap"><div class="dist-bar" style="width:${pct}%;background:${d.color}"></div></div><span class="dist-count">${d.count}</span></div>`;
+                }).join('');
+                document.getElementById('topic-health-list').innerHTML = MOCK_TOPICS.map(t => {
+                    const pctClass = t.classAvg >= 61 ? 'hi' : t.classAvg >= 41 ? 'mid' : 'lo';
+                    return `<div class="topic-health-item"><span class="name">Week ${t.week}: ${t.name}</span><span class="pct ${pctClass}">${t.classAvg}%</span></div>`;
+                }).join('');
+                document.getElementById('attention-list').innerHTML = MOCK_ATTENTION.map(a => `
+                    <div class="attention-item ${a.critical ? 'critical' : ''}" data-student-id="${MOCK_STUDENTS.find(s => s.name === a.name)?.id || 's1'}">
+                        <div class="name">${a.name}</div>
+                        <div class="gap">${a.gap}</div>
+                        <div class="score">${a.score} ${a.trend === 'down' ? '↓' : ''}</div>
+                        <button type="button" class="btn-send-rec">Send study recommendation</button>
+                    </div>
+                `).join('');
+                document.getElementById('attention-list').querySelectorAll('.attention-item').forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        if (e.target.classList.contains('btn-send-rec')) return;
+                        openStudent(item.dataset.studentId);
+                    });
+                });
+                document.getElementById('activity-list').innerHTML = MOCK_ACTIVITY.map(a => `<div class="activity-item">${a}</div>`).join('');
+            }
+            function renderRoster() {
+                const tbody = document.getElementById('roster-tbody');
+                const scoreFilter = document.getElementById('filter-score').value;
+                const trendFilter = document.getElementById('filter-trend').value;
+                const topicFilter = (document.getElementById('filter-topic').value || '').toLowerCase();
+                const search = (document.getElementById('filter-search').value || '').toLowerCase();
+                let list = MOCK_STUDENTS.filter(s => {
+                    if (scoreFilter === 'below50' && s.score >= 50) return false;
+                    if (scoreFilter === '50-60' && (s.score < 50 || s.score > 60)) return false;
+                    if (scoreFilter === '60-80' && (s.score < 60 || s.score > 80)) return false;
+                    if (scoreFilter === 'above80' && s.score <= 80) return false;
+                    if (trendFilter && s.trend !== trendFilter) return false;
+                    if (topicFilter && !(s.gap || '').toLowerCase().includes(topicFilter)) return false;
+                    if (search && !s.name.toLowerCase().includes(search)) return false;
+                    return true;
+                });
+                tbody.innerHTML = list.map(s => {
+                    const scoreCl = scoreClass(s.score);
+                    const trendSym = s.trend === 'up' ? '↑' : s.trend === 'down' ? '↓' : '→';
+                    const trendCl = s.trend === 'up' ? 'trend-up' : s.trend === 'down' ? 'trend-down' : 'trend-stable';
+                    return `<tr class="clickable" data-student-id="${s.id}">
+                        <td>${s.name}${s.mismatch ? '<span class="mismatch-badge">Mismatch</span>' : ''}</td>
+                        <td class="score-cell ${scoreCl}">${s.score}</td>
+                        <td class="${trendCl}">${trendSym}</td>
+                        <td>${s.sessionsThisWeek}</td>
+                        <td>${s.lastActive}</td>
+                        <td>${s.canvasGrade}</td>
+                        <td>${s.gap}</td>
+                    </tr>`;
+                }).join('');
+                tbody.querySelectorAll('tr.clickable').forEach(tr => {
+                    tr.addEventListener('click', () => openStudent(tr.dataset.studentId));
+                });
+            }
+            function openStudent(id) {
+                document.querySelectorAll('.prof-screen').forEach(s => s.classList.remove('active'));
+                document.getElementById('screen-student').classList.add('active');
+                document.querySelectorAll('.prof-nav-item').forEach(n => n.classList.remove('active'));
+                const student = MOCK_STUDENTS.find(s => s.id === id) || MOCK_STUDENTS[0];
+                const detail = getStudentDetail(id);
+                document.getElementById('student-header').innerHTML = `
+                    <div class="student-avatar-lg">${student.name.split(' ').map(n => n[0]).join('').slice(0,2)}</div>
+                    <div class="student-header-info">
+                        <div class="student-header-name">${student.name}</div>
+                        <div class="student-header-meta">Member since Jan 15, 2026 · ${detail.sessions.length} Deep Dive sessions</div>
+                        <div class="student-header-score ${meterColor(student.score)}">LATENT ${student.score}</div>
+                        <div style="font-size: var(--fs-sm); color: var(--text-tertiary); margin-top: 4px;">Canvas ${student.canvasGrade}</div>
+                    </div>
+                `;
+                const maxT = Math.max(...detail.timeline);
+                document.getElementById('timeline-chart').innerHTML = detail.timeline.map((v, i) =>
+                    `<div class="timeline-bar" style="height: ${(v / maxT) * 100}%" title="Score: ${v}"></div>`
+                ).join('');
+                document.getElementById('topic-radar').innerHTML = detail.topicScores.map(t => {
+                    const cl = t.pct >= 70 ? 'hi' : t.pct >= 50 ? 'mid' : 'lo';
+                    return `<span class="topic-chip"><span class="pct ${cl}">${t.pct}%</span> ${t.name}</span>`;
+                }).join('');
+                document.getElementById('session-list').innerHTML = detail.sessions.map(se => `
+                    <div class="session-item">
+                        <div class="when">${se.when} · ${se.duration}</div>
+                        <div class="topic">${se.topic}</div>
+                        ${se.aha ? `<div class="aha">${se.aha}</div>` : ''}
+                    </div>
+                `).join('');
+            }
+            document.getElementById('student-detail-back').addEventListener('click', () => {
+                document.querySelectorAll('.prof-screen').forEach(s => s.classList.remove('active'));
+                document.getElementById('screen-roster').classList.add('active');
+                document.querySelectorAll('.prof-nav-item').forEach(n => { n.classList.toggle('active', n.dataset.screen === 'roster'); });
+            });
+            document.querySelectorAll('.prof-nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const screen = this.dataset.screen;
+                    if (!screen) return;
+                    document.querySelectorAll('.prof-nav-item').forEach(n => n.classList.remove('active'));
+                    this.classList.add('active');
+                    document.querySelectorAll('.prof-screen').forEach(s => {
+                        s.classList.toggle('active', s.id === 'screen-' + screen);
+                    });
+                });
+            });
+            document.getElementById('theme-select').addEventListener('change', function() {
+                document.body.setAttribute('data-theme', this.value);
+            });
+            document.getElementById('filter-score').addEventListener('change', renderRoster);
+            document.getElementById('filter-trend').addEventListener('change', renderRoster);
+            document.getElementById('filter-search').addEventListener('input', renderRoster);
+            MOCK_TOPICS.forEach(t => {
+                const sel = document.getElementById('filter-topic');
+                const opt = document.createElement('option');
+                opt.value = t.name;
+                opt.textContent = t.name;
+                sel.appendChild(opt);
+            });
+            document.getElementById('filter-topic').addEventListener('change', renderRoster);
+
+            renderCourseList();
+            updateTopbar();
+            renderOverview();
+            renderRoster();
+        })();
+    </script>
+</body>
+</html>
