@@ -39,7 +39,7 @@
             --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* ===== THEMES (matching v14 exactly) ===== */
+        /* ===== THEMES ===== */
         [data-theme="clear"] {
             --bg: #f5f5f7; --bg-card: #ffffff; --bg-sidebar: #fafafa;
             --text: #1d1d1f; --text-secondary: rgba(29,29,31,0.5); --text-tertiary: rgba(29,29,31,0.35);
@@ -89,24 +89,28 @@
         /* ===== LAYOUT ===== */
         .app-shell { display: flex; height: 100vh; }
 
-        /* Sidebar */
+        /* Sidebar — permanent, never collapses */
         .sidebar {
             width: 260px; min-width: 260px;
             background: var(--bg-sidebar); border-right: 1px solid var(--border);
             display: flex; flex-direction: column;
-            transition: all 0.4s var(--ease-out);
+            transition: background 0.5s var(--ease-out);
         }
-        .sidebar.collapsed { width: 0; min-width: 0; overflow: hidden; border-right: none; }
         .sidebar-header {
-            padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 20px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: var(--sp-12);
         }
-        .sidebar-brand { display: flex; align-items: center; gap: var(--sp-10); }
-        .sidebar-logo { font-size: var(--fs-lg); font-weight: 700; letter-spacing: 0.04em; }
-        .sidebar-badge {
-            font-size: var(--fs-xs); font-weight: 600; color: var(--text-secondary);
-            background: var(--badge-bg); padding: 3px 8px; border-radius: 100px;
+        .back-btn {
+            width: 32px; height: 32px; border-radius: var(--r-md);
+            border: 1px solid var(--border); background: transparent;
+            color: var(--text-secondary); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s var(--ease-out); flex-shrink: 0;
         }
+        .back-btn:hover { background: var(--badge-bg); color: var(--text); transform: translateX(-2px); }
+        .back-btn svg { width: 16px; height: 16px; }
+        .sidebar-header-info { flex: 1; min-width: 0; }
+        .sidebar-header-title { font-size: var(--fs-lg); font-weight: 600; line-height: 1.3; }
 
         .sidebar-section { padding: 16px 12px 8px; }
         .sidebar-section-label {
@@ -124,15 +128,14 @@
         }
         .sidebar-item::before {
             content: ''; position: absolute; inset: 0;
-            background: var(--badge-bg); opacity: 0;
-            transition: opacity 0.2s;
+            background: var(--badge-bg); opacity: 0; transition: opacity 0.2s;
         }
         .sidebar-item:hover::before { opacity: 1; }
         .sidebar-item:hover { color: var(--text); }
         .sidebar-item.active { background: var(--btn-bg); color: var(--btn-text); }
         .sidebar-item.active::before { display: none; }
         .sidebar-item svg { width: 16px; height: 16px; flex-shrink: 0; position: relative; z-index: 1; }
-        .sidebar-item span:not(.item-count) { position: relative; z-index: 1; }
+        .sidebar-item span:not(.item-count):not(.kbd) { position: relative; z-index: 1; }
         .sidebar-item .item-count {
             margin-left: auto; font-size: var(--fs-xs); font-weight: 600;
             color: var(--text-tertiary); background: var(--badge-bg);
@@ -143,8 +146,7 @@
             margin-left: auto; font-size: 9px; font-weight: 600;
             color: var(--text-tertiary); background: var(--badge-bg);
             padding: 2px 5px; border-radius: 3px; position: relative; z-index: 1;
-            font-family: 'SF Mono', SFMono-Regular, Consolas, monospace;
-            opacity: 0.5;
+            font-family: 'SF Mono', SFMono-Regular, Consolas, monospace; opacity: 0.5;
         }
 
         .sidebar-courses { flex: 1; overflow-y: auto; padding: 8px 12px; }
@@ -176,36 +178,30 @@
         .prof-role { font-size: var(--fs-xs); color: var(--text-tertiary); }
 
         /* Main Area */
-        .main-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .main-area { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
 
         .top-bar {
             height: 56px; background: var(--bg-card); border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between;
+            display: flex; align-items: center; justify-content: flex-end;
             padding: 0 24px; flex-shrink: 0;
             transition: background 0.5s var(--ease-out);
         }
-        .top-bar-left { display: flex; align-items: center; gap: var(--sp-12); }
-        .top-bar-title { font-size: var(--fs-lg); font-weight: 600; }
-        .top-bar-sub { font-size: var(--fs-sm); color: var(--text-tertiary); }
         .top-bar-right { display: flex; align-items: center; gap: var(--sp-8); }
-        .toggle-sidebar-btn {
-            width: 36px; height: 36px; border-radius: var(--r-md);
-            border: 1px solid var(--border); background: transparent;
-            color: var(--text-secondary); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s var(--ease-out);
-        }
-        .toggle-sidebar-btn:hover { background: var(--badge-bg); color: var(--text); }
-        .toggle-sidebar-btn svg { width: 16px; height: 16px; }
         .top-btn {
             width: 36px; height: 36px; border-radius: var(--r-md);
             border: 1px solid var(--border); background: transparent;
             color: var(--text-secondary); cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s var(--ease-out);
+            transition: all 0.2s var(--ease-out); position: relative;
         }
         .top-btn:hover { background: var(--badge-bg); color: var(--text); }
         .top-btn svg { width: 16px; height: 16px; }
+
+        /* Notification badge dot */
+        .notif-dot {
+            position: absolute; top: 6px; right: 6px; width: 7px; height: 7px;
+            border-radius: 50%; background: #ef4444;
+        }
 
         /* Theme Dropdown */
         .theme-dropdown {
@@ -225,91 +221,113 @@
         }
         .theme-opt:hover { background: var(--badge-bg); }
         .theme-opt.active { border-color: var(--accent); background: var(--accent-light); }
-        .theme-swatch {
-            width: 44px; height: 30px; border-radius: var(--r-sm);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-        }
+        .theme-swatch { width: 44px; height: 30px; border-radius: var(--r-sm); box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
         .theme-opt span { font-size: var(--fs-xs); font-weight: 500; color: var(--text-secondary); }
         .theme-opt.active span { color: var(--text); font-weight: 600; }
 
-        .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: clamp(16px, 2.5vw, 32px); }
+        /* Notifications Right Panel */
+        .notif-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 998;
+            opacity: 0; visibility: hidden; transition: all 0.3s var(--ease-out);
+        }
+        .notif-overlay.visible { opacity: 1; visibility: visible; }
+        .notif-panel {
+            position: fixed; top: 0; right: 0; bottom: 0; width: 360px;
+            background: var(--bg-card); border-left: 1px solid var(--border);
+            box-shadow: -8px 0 32px var(--shadow); z-index: 999;
+            display: flex; flex-direction: column;
+            transform: translateX(100%); transition: transform 0.35s var(--ease-out);
+        }
+        .notif-panel.visible { transform: translateX(0); }
+        .notif-header {
+            padding: 20px 24px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+        }
+        .notif-header-title { font-size: var(--fs-lg); font-weight: 600; }
+        .notif-close {
+            width: 32px; height: 32px; border-radius: var(--r-md);
+            border: 1px solid var(--border); background: transparent;
+            color: var(--text-secondary); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s var(--ease-out);
+        }
+        .notif-close:hover { background: var(--badge-bg); color: var(--text); }
+        .notif-close svg { width: 16px; height: 16px; }
+        .notif-list { overflow-y: auto; flex: 1; }
+        .notif-item {
+            display: flex; align-items: flex-start; gap: var(--sp-12);
+            padding: 16px 24px; border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
+        }
+        .notif-item:last-child { border-bottom: none; }
+        .notif-item:hover { background: var(--badge-bg); }
+        .notif-dot-wrap { padding-top: 5px; }
+        .notif-color-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .notif-text { font-size: var(--fs-base); color: var(--text-secondary); line-height: 1.6; flex: 1; }
+        .notif-time { font-size: var(--fs-xs); color: var(--text-tertiary); margin-top: 4px; }
+
+        .content {
+            flex: 1; overflow: hidden; padding: clamp(16px, 2vw, 28px);
+            display: flex; flex-direction: column;
+        }
 
         /* ===== VIEWS ===== */
-        .view { display: none; flex-direction: column; gap: var(--sp-24); }
+        .view { display: none; flex-direction: column; gap: var(--sp-16); flex: 1; overflow: hidden; }
         .view.active { display: flex; }
 
         /* Staggered card entrance */
-        .view.active .anim-card {
-            animation: cardIn 0.5s var(--ease-out) both;
-        }
+        .view.active .anim-card { animation: cardIn 0.5s var(--ease-out) both; }
         .view.active .anim-card:nth-child(1) { animation-delay: 0ms; }
         .view.active .anim-card:nth-child(2) { animation-delay: 50ms; }
         .view.active .anim-card:nth-child(3) { animation-delay: 100ms; }
         .view.active .anim-card:nth-child(4) { animation-delay: 150ms; }
         .view.active .anim-card:nth-child(5) { animation-delay: 200ms; }
-        .view.active .anim-card:nth-child(6) { animation-delay: 250ms; }
         @keyframes cardIn {
             from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Stat row stagger */
-        .stat-row .stat-card {
-            animation: cardIn 0.5s var(--ease-out) both;
-        }
+        /* Stat row */
+        .stat-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--sp-12); flex-shrink: 0; }
+        .stat-row .stat-card { animation: cardIn 0.5s var(--ease-out) both; }
         .stat-row .stat-card:nth-child(1) { animation-delay: 0ms; }
         .stat-row .stat-card:nth-child(2) { animation-delay: 60ms; }
         .stat-row .stat-card:nth-child(3) { animation-delay: 120ms; }
         .stat-row .stat-card:nth-child(4) { animation-delay: 180ms; }
+        .stat-row .stat-card:nth-child(5) { animation-delay: 240ms; }
 
-        /* ===== CARDS ===== */
-        .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-12); }
         .stat-card {
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: var(--r-lg); padding: var(--sp-20);
+            border-radius: var(--r-lg); padding: var(--sp-16);
             transition: all 0.3s var(--ease-out);
         }
         .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px var(--shadow); }
-        .stat-label { font-size: var(--fs-sm); color: var(--text-secondary); margin-bottom: var(--sp-6); }
-        .stat-value { font-size: var(--fs-2xl); font-weight: 700; letter-spacing: -0.02em; margin-bottom: var(--sp-4); }
+        .stat-label { font-size: var(--fs-sm); color: var(--text-secondary); margin-bottom: var(--sp-4); }
+        .stat-value { font-size: var(--fs-2xl); font-weight: 700; letter-spacing: -0.02em; margin-bottom: var(--sp-2); }
         .stat-sub { font-size: var(--fs-xs); color: var(--text-tertiary); }
         .stat-sub.up { color: #22c55e; }
         .stat-sub.down { color: #ef4444; }
 
-        /* Score Gauge */
-        .gauge-card {
+        /* ===== OVERVIEW TWO-COL (graph left, overview right) ===== */
+        .overview-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-16);
+            flex: 1; overflow: hidden; min-height: 0;
+        }
+
+        /* Left column: graph + topic health stacked */
+        .overview-left { display: flex; flex-direction: column; gap: var(--sp-16); overflow: hidden; min-height: 0; }
+
+        /* Distribution Card — expanded, centralized */
+        .distrib-card {
             background: var(--bg-card); border: 1px solid var(--border);
             border-radius: var(--r-xl); padding: var(--sp-24);
-            display: flex; align-items: center; gap: var(--sp-32);
-            transition: all 0.3s var(--ease-out);
+            display: flex; flex-direction: column; align-items: center; flex: 1; min-height: 0;
         }
-        .gauge-wrap { position: relative; width: 160px; height: 160px; flex-shrink: 0; }
-        .gauge-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-        .gauge-bg { fill: none; stroke: var(--badge-bg); stroke-width: 10; }
-        .gauge-fill {
-            fill: none; stroke-width: 10; stroke-linecap: round;
-            transition: stroke-dashoffset 1.8s var(--ease-out), stroke 0.5s;
-        }
-        .gauge-value {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: var(--fs-4xl); font-weight: 700;
-            font-family: 'SF Mono', SFMono-Regular, Consolas, monospace;
-        }
-        .gauge-title { font-size: var(--fs-md); font-weight: 600; margin-bottom: var(--sp-4); }
-        .gauge-trend {
-            display: flex; align-items: center; gap: var(--sp-6);
-            font-size: var(--fs-sm); font-weight: 600;
-        }
-        .gauge-trend.up { color: #22c55e; }
-        .gauge-trend.down { color: #ef4444; }
-        .gauge-trend svg { width: 14px; height: 14px; }
-
-        /* Distribution */
-        .distrib-title { font-size: var(--fs-md); font-weight: 600; }
-        .distrib-bar-wrap { display: flex; gap: 3px; height: 100px; align-items: flex-end; }
+        .distrib-title { font-size: var(--fs-md); font-weight: 600; margin-bottom: var(--sp-16); }
+        .distrib-bar-wrap { display: flex; gap: 4px; flex: 1; align-items: flex-end; min-height: 60px; width: 88%; }
         .distrib-bar {
             flex: 1; border-radius: 4px 4px 0 0;
-            transition: height 0.8s var(--ease-out), opacity 0.15s;
+            transition: height 0.8s var(--ease-out), opacity 0.15s, filter 0.2s;
             cursor: pointer; position: relative;
             animation: barGrow 0.8s var(--ease-out) both;
         }
@@ -327,91 +345,108 @@
             from { transform: scaleY(0); transform-origin: bottom; }
             to { transform: scaleY(1); transform-origin: bottom; }
         }
-        .distrib-bar:hover { opacity: 0.8; }
+        .distrib-bar:hover { opacity: 0.85; }
+        .distrib-bar.active-bar { filter: brightness(1.2); box-shadow: 0 0 12px rgba(255,255,255,0.15); }
         .distrib-bar .bar-tooltip {
-            position: absolute; top: -32px; left: 50%; transform: translateX(-50%);
+            position: absolute; top: -34px; left: 50%; transform: translateX(-50%);
             background: var(--text); color: var(--bg); padding: 4px 10px;
             border-radius: var(--r-sm); font-size: var(--fs-xs); font-weight: 600;
-            white-space: nowrap; opacity: 0; transition: opacity 0.2s;
-            pointer-events: none;
+            white-space: nowrap; opacity: 0; transition: opacity 0.2s; pointer-events: none;
         }
         .distrib-bar .bar-tooltip::after {
             content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
             border: 4px solid transparent; border-top-color: var(--text);
         }
         .distrib-bar:hover .bar-tooltip { opacity: 1; }
-        .distrib-labels { display: flex; justify-content: space-between; margin-top: var(--sp-8); font-size: var(--fs-xs); color: var(--text-tertiary); }
-        .distrib-legend { display: flex; gap: var(--sp-16); margin-top: var(--sp-12); flex-wrap: wrap; }
+        .distrib-labels { display: flex; justify-content: space-between; margin-top: var(--sp-8); font-size: var(--fs-xs); color: var(--text-tertiary); flex-shrink: 0; width: 88%; }
+        .distrib-legend { display: flex; gap: var(--sp-16); margin-top: var(--sp-10); flex-wrap: wrap; flex-shrink: 0; }
         .legend-item { display: flex; align-items: center; gap: var(--sp-6); font-size: var(--fs-xs); color: var(--text-secondary); }
         .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
 
-        /* Two column layout */
-        .two-col { display: grid; grid-template-columns: 5fr 3fr; gap: var(--sp-16); }
-
-        /* Topic Health */
-        .topic-card, .attention-card, .feed-card {
+        /* Topic Health Card */
+        .topic-card {
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: var(--r-xl); padding: var(--sp-24);
-            transition: all 0.3s var(--ease-out);
+            border-radius: var(--r-xl); padding: var(--sp-20);
+            display: flex; flex-direction: column; overflow: hidden; min-height: 0;
+            flex-shrink: 0; max-height: 40%;
         }
-        .topic-header, .attention-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-16); }
-        .topic-title, .attention-title, .feed-title { font-size: var(--fs-md); font-weight: 600; }
+        .topic-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-12); flex-shrink: 0; }
+        .topic-title { font-size: var(--fs-md); font-weight: 600; }
+        .topic-scroll { overflow-y: auto; overflow-x: hidden; flex: 1; min-height: 0; }
         .topic-row {
-            display: flex; align-items: center; gap: var(--sp-12);
-            padding: 10px var(--sp-12); border-radius: var(--r-md);
+            display: flex; align-items: center; gap: var(--sp-10);
+            padding: 8px var(--sp-10); border-radius: var(--r-md);
             cursor: pointer; transition: all 0.15s var(--ease-out);
+            overflow: hidden;
         }
         .topic-row:hover { background: var(--badge-bg); transform: translateX(2px); }
-        .topic-week { font-size: var(--fs-xs); font-weight: 600; color: var(--text-tertiary); min-width: 50px; }
-        .topic-name { flex: 1; font-size: var(--fs-base); font-weight: 500; }
-        .topic-bar-bg { width: 100px; height: 6px; background: var(--badge-bg); border-radius: 3px; overflow: hidden; }
+        .topic-week { font-size: var(--fs-xs); font-weight: 600; color: var(--text-tertiary); min-width: 42px; flex-shrink: 0; }
+        .topic-name { flex: 1; font-size: var(--fs-sm); font-weight: 500; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .topic-bar-bg { width: 80px; height: 6px; background: var(--badge-bg); border-radius: 3px; overflow: hidden; flex-shrink: 0; }
         .topic-bar-fill { height: 100%; border-radius: 3px; transition: width 1s var(--ease-out); }
-        .topic-score { font-size: var(--fs-sm); font-weight: 700; min-width: 36px; text-align: right; }
-        .topic-status { font-size: var(--fs-base); min-width: 20px; text-align: center; }
+        .topic-score { font-size: var(--fs-sm); font-weight: 700; min-width: 34px; text-align: right; flex-shrink: 0;
+            font-family: 'SF Mono', SFMono-Regular, Consolas, monospace; }
 
-        /* Needs Attention */
-        .attention-header { display: flex; align-items: center; gap: var(--sp-8); margin-bottom: var(--sp-16); }
-        .attention-header svg { width: 18px; height: 18px; color: #f59e0b; }
-        .attention-count {
+        /* ===== RIGHT: OVERVIEW PANEL (all students, color-coded) ===== */
+        .overview-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--r-xl); display: flex; flex-direction: column;
+            overflow: hidden; min-height: 0;
+        }
+        .overview-header {
+            display: flex; align-items: center; gap: var(--sp-8);
+            padding: var(--sp-20) var(--sp-20) var(--sp-12);
+            flex-shrink: 0;
+        }
+        .overview-header svg { width: 18px; height: 18px; color: var(--accent); }
+        .overview-title { font-size: var(--fs-md); font-weight: 600; }
+        .overview-count {
             margin-left: auto; font-size: var(--fs-xs); font-weight: 600;
             color: var(--text-tertiary); background: var(--badge-bg);
             padding: 3px 10px; border-radius: 100px;
         }
-        .attention-item {
-            display: flex; align-items: center; gap: var(--sp-12);
-            padding: 12px var(--sp-12); border-radius: var(--r-md);
-            border-left: 3px solid #f59e0b; margin-bottom: var(--sp-8);
-            background: var(--bg); cursor: pointer; transition: all 0.2s var(--ease-out);
+        .overview-list { overflow-y: auto; flex: 1; min-height: 0; padding: 0 var(--sp-12) var(--sp-12); }
+
+        /* Group headings inside overview */
+        .overview-group-label {
+            font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.1em; padding: var(--sp-12) var(--sp-8) var(--sp-6);
+            color: var(--text-tertiary); position: sticky; top: 0;
+            background: var(--bg-card); z-index: 1;
         }
-        .attention-item:hover { box-shadow: 0 2px 12px var(--shadow); transform: translateX(3px); }
-        .attention-item.critical { border-left-color: #ef4444; }
-        .attn-avatar {
-            width: 36px; height: 36px; border-radius: 50%;
+
+        .overview-item {
+            display: flex; align-items: center; gap: var(--sp-10);
+            padding: 10px var(--sp-10); border-radius: var(--r-md);
+            margin-bottom: 2px; cursor: pointer; transition: all 0.2s var(--ease-out);
+            border-left: 3px solid transparent;
+        }
+        .overview-item:hover { background: var(--badge-bg); transform: translateX(3px); }
+        .overview-item.green { border-left-color: #22c55e; }
+        .overview-item.blue { border-left-color: #3b82f6; }
+        .overview-item.yellow { border-left-color: #f59e0b; }
+        .overview-item.red { border-left-color: #ef4444; }
+        .ov-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
             background: var(--badge-bg); display: flex; align-items: center; justify-content: center;
             font-size: var(--fs-xs); font-weight: 600; color: var(--text-secondary); flex-shrink: 0;
         }
-        .attn-info { flex: 1; min-width: 0; }
-        .attn-name { font-size: var(--fs-base); font-weight: 600; }
-        .attn-gap { font-size: var(--fs-sm); color: var(--text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .attn-score { font-size: var(--fs-lg); font-weight: 700; min-width: 40px; text-align: right; }
-        .attn-trend { font-size: var(--fs-xs); text-align: right; }
-        .attn-trend.down { color: #ef4444; }
-
-        /* Activity Feed */
-        .feed-title { margin-bottom: var(--sp-12); }
-        .feed-item {
-            display: flex; gap: var(--sp-10); padding: var(--sp-8) 0;
-            font-size: var(--fs-sm); color: var(--text-secondary);
-            border-bottom: 1px solid var(--border);
+        .ov-info { flex: 1; min-width: 0; }
+        .ov-name { font-size: var(--fs-sm); font-weight: 600; }
+        .ov-gap { font-size: var(--fs-xs); color: var(--text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .ov-score {
+            font-size: var(--fs-sm); font-weight: 700; min-width: 32px; text-align: right;
+            font-family: 'SF Mono', SFMono-Regular, Consolas, monospace;
         }
-        .feed-item:last-child { border-bottom: none; }
-        .feed-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
-        .feed-time { font-size: var(--fs-xs); color: var(--text-tertiary); margin-top: 2px; }
+        .ov-trend { font-size: var(--fs-xs); text-align: right; min-width: 20px; }
+        .ov-trend.up { color: #22c55e; }
+        .ov-trend.down { color: #ef4444; }
+        .ov-trend.stable { color: var(--text-tertiary); }
 
         /* ===== STUDENT ROSTER ===== */
         .roster-controls {
             display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap; gap: var(--sp-12);
+            flex-wrap: wrap; gap: var(--sp-12); flex-shrink: 0;
         }
         .roster-search {
             display: flex; align-items: center; gap: var(--sp-8);
@@ -426,21 +461,20 @@
             color: var(--text); outline: none; width: 100%; font-family: inherit;
         }
         .roster-search input::placeholder { color: var(--text-tertiary); }
-
         .roster-filters { display: flex; gap: var(--sp-6); flex-wrap: wrap; }
         .filter-chip {
             padding: 6px 14px; background: var(--bg-card); border: 1px solid var(--border);
             border-radius: 100px; font-size: var(--fs-sm); font-weight: 500;
-            color: var(--text-secondary); cursor: pointer; transition: all 0.2s var(--ease-out);
-            font-family: inherit;
+            color: var(--text-secondary); cursor: pointer; transition: all 0.2s var(--ease-out); font-family: inherit;
         }
         .filter-chip:hover { border-color: var(--text-secondary); }
         .filter-chip.active { background: var(--btn-bg); color: var(--btn-text); border-color: var(--btn-bg); }
 
         .roster-table-wrap {
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: var(--r-xl); overflow: hidden;
+            border-radius: var(--r-xl); overflow: hidden; flex: 1; display: flex; flex-direction: column; min-height: 0;
         }
+        .roster-table-scroll { overflow-y: auto; flex: 1; min-height: 0; }
         .roster-table { width: 100%; border-collapse: collapse; }
         .roster-table th {
             padding: 12px 16px; text-align: left;
@@ -448,6 +482,7 @@
             letter-spacing: 0.08em; color: var(--text-tertiary);
             border-bottom: 1px solid var(--border); cursor: pointer;
             user-select: none; transition: color 0.15s;
+            position: sticky; top: 0; background: var(--bg-card); z-index: 1;
         }
         .roster-table th:hover { color: var(--text-secondary); }
         .roster-table th.sorted { color: var(--text); }
@@ -485,7 +520,6 @@
         .trend-indicator.stable { color: var(--text-tertiary); }
 
         .gap-text { font-size: var(--fs-sm); color: var(--text-secondary); max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
         .mismatch-flag {
             display: inline-flex; align-items: center; gap: 4px;
             padding: 2px 8px; border-radius: 100px;
@@ -493,18 +527,13 @@
             background: rgba(245,158,11,0.12); color: #f59e0b;
         }
         .last-active { font-size: var(--fs-sm); color: var(--text-tertiary); }
-
-        /* Roster count footer */
         .roster-footer {
             padding: 12px 16px; border-top: 1px solid var(--border);
-            font-size: var(--fs-sm); color: var(--text-tertiary);
-            display: flex; justify-content: space-between;
+            font-size: var(--fs-sm); color: var(--text-tertiary); flex-shrink: 0;
         }
 
         /* ===== INDIVIDUAL STUDENT VIEW ===== */
-        .student-view-header {
-            display: flex; justify-content: space-between; align-items: flex-start;
-        }
+        .student-view-header { display: flex; justify-content: space-between; align-items: flex-start; flex-shrink: 0; }
         .student-view-back {
             display: flex; align-items: center; gap: var(--sp-8);
             font-size: var(--fs-base); color: var(--text-secondary);
@@ -521,18 +550,12 @@
         .student-lg-name { font-size: var(--fs-2xl); font-weight: 700; letter-spacing: -0.02em; }
         .student-lg-meta { font-size: var(--fs-sm); color: var(--text-secondary); margin-top: 2px; }
 
-        /* Score comparison card */
-        .score-compare {
-            display: flex; gap: var(--sp-24); align-items: flex-end; text-align: right;
-        }
-        .score-main { }
+        .score-compare { display: flex; gap: var(--sp-24); align-items: flex-end; text-align: right; }
         .score-main-value {
             font-size: var(--fs-hero); font-weight: 800; letter-spacing: -0.03em;
-            font-family: 'SF Mono', SFMono-Regular, Consolas, monospace;
-            line-height: 1;
+            font-family: 'SF Mono', SFMono-Regular, Consolas, monospace; line-height: 1;
         }
         .score-main-label { font-size: var(--fs-sm); color: var(--text-tertiary); }
-        .score-canvas { }
         .score-canvas-value {
             font-size: var(--fs-2xl); font-weight: 700; letter-spacing: -0.02em;
             color: var(--text-secondary); line-height: 1;
@@ -541,16 +564,15 @@
         .score-gap-indicator {
             display: inline-flex; align-items: center; gap: 4px;
             padding: 3px 10px; border-radius: 100px;
-            font-size: var(--fs-xs); font-weight: 600;
-            margin-top: var(--sp-6);
+            font-size: var(--fs-xs); font-weight: 600; margin-top: var(--sp-6);
         }
         .score-gap-indicator.warning { background: rgba(245,158,11,0.12); color: #f59e0b; }
         .score-gap-indicator.danger { background: rgba(239,68,68,0.12); color: #ef4444; }
         .score-gap-indicator.aligned { background: rgba(34,197,94,0.12); color: #22c55e; }
 
-        .student-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-12); }
+        .student-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-12); flex-shrink: 0; }
+        .student-scroll { flex: 1; overflow-y: auto; min-height: 0; }
 
-        /* Timeline Chart */
         .timeline-card, .session-card, .radar-card, .aha-card {
             background: var(--bg-card); border: 1px solid var(--border);
             border-radius: var(--r-xl); padding: var(--sp-24);
@@ -566,7 +588,6 @@
         .timeline-dot:hover { r: 6; }
         .timeline-grid-line { stroke: var(--border); stroke-width: 1; }
 
-        /* Topic Breakdown */
         .radar-list { display: flex; flex-direction: column; gap: var(--sp-8); }
         .radar-item { display: flex; align-items: center; gap: var(--sp-12); }
         .radar-label { flex: 1; font-size: var(--fs-base); font-weight: 500; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -575,7 +596,6 @@
         .radar-score { font-size: var(--fs-sm); font-weight: 700; min-width: 36px; text-align: right;
             font-family: 'SF Mono', SFMono-Regular, Consolas, monospace; }
 
-        /* Session History */
         .session-item {
             display: flex; align-items: flex-start; gap: var(--sp-12);
             padding: 14px var(--sp-12); background: var(--bg);
@@ -596,7 +616,6 @@
         .session-change.up { color: #22c55e; }
         .session-change.down { color: #ef4444; }
 
-        /* Aha Moments */
         .aha-title { display: flex; align-items: center; gap: var(--sp-8); margin-bottom: var(--sp-16); }
         .aha-item {
             padding: 14px var(--sp-16); background: var(--bg);
@@ -606,8 +625,7 @@
         }
         .aha-item .aha-time { font-size: var(--fs-xs); font-weight: 600; color: var(--text-tertiary); margin-bottom: 4px; }
 
-        /* Action Buttons */
-        .action-row { display: flex; gap: var(--sp-10); flex-wrap: wrap; }
+        .action-row { display: flex; gap: var(--sp-10); flex-wrap: wrap; flex-shrink: 0; }
         .action-btn {
             padding: 10px 20px; border-radius: var(--r-md);
             font-size: var(--fs-sm); font-weight: 600; cursor: pointer;
@@ -620,14 +638,11 @@
         .action-btn.secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
         .action-btn.secondary:hover { background: var(--badge-bg); }
 
-        /* Color helpers */
         .bg-red { background: #ef4444; } .bg-yellow { background: #f59e0b; }
         .bg-blue { background: #3b82f6; } .bg-green { background: #22c55e; }
 
-        /* ===== INSIGHTS PLACEHOLDER ===== */
-        .insights-placeholder {
-            text-align: center; padding: 80px 20px;
-        }
+        /* Insights */
+        .insights-placeholder { text-align: center; padding: 80px 20px; }
         .insights-placeholder .icon-wrap {
             width: 64px; height: 64px; margin: 0 auto var(--sp-20);
             background: var(--badge-bg); border-radius: 50%;
@@ -637,14 +652,12 @@
 
         /* Responsive */
         @media (max-width: 1100px) {
-            .two-col { grid-template-columns: 1fr; }
+            .overview-grid { grid-template-columns: 1fr; }
             .stat-row { grid-template-columns: repeat(2, 1fr); }
             .student-stats { grid-template-columns: repeat(2, 1fr); }
-            .gauge-card { flex-direction: column; }
         }
         @media (max-width: 768px) {
-            .sidebar { position: fixed; left: 0; top: 0; height: 100vh; z-index: 100; box-shadow: 8px 0 32px var(--shadow); }
-            .sidebar.collapsed { transform: translateX(-100%); }
+            .sidebar { display: none; }
             .stat-row { grid-template-columns: 1fr 1fr; }
             .roster-controls { flex-direction: column; align-items: stretch; }
             .roster-search { min-width: unset; }
@@ -655,12 +668,14 @@
 </head>
 <body>
 <div class="app-shell">
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR — permanent -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <div class="sidebar-brand">
-                <span class="sidebar-logo">LATENT</span>
-                <span class="sidebar-badge">Professor</span>
+            <button class="back-btn" onclick="goBack()" title="Back to home">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            </button>
+            <div class="sidebar-header-info">
+                <div class="sidebar-header-title" id="sidebar-title">Course Overview</div>
             </div>
         </div>
 
@@ -700,15 +715,6 @@
     <!-- MAIN -->
     <div class="main-area">
         <div class="top-bar">
-            <div class="top-bar-left">
-                <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                </button>
-                <div>
-                    <div class="top-bar-title" id="top-title">Course Overview</div>
-                    <div class="top-bar-sub" id="top-sub">POL 201 — Political Philosophy · Spring 2026</div>
-                </div>
-            </div>
             <div class="top-bar-right">
                 <div style="position:relative">
                     <button class="top-btn" onclick="toggleThemeDropdown()" title="Change theme">
@@ -723,8 +729,25 @@
                         </div>
                     </div>
                 </div>
-                <button class="top-btn" title="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+                <div style="position:relative">
+                    <button class="top-btn" id="notif-btn" onclick="toggleNotifications()" title="Notifications">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        <div class="notif-dot" id="notif-dot"></div>
+                    </button>
+                </div>
             </div>
+        </div>
+
+        <!-- Notifications Right Panel -->
+        <div class="notif-overlay" id="notif-overlay" onclick="closeNotifications()"></div>
+        <div class="notif-panel" id="notif-panel">
+            <div class="notif-header">
+                <span class="notif-header-title">Notifications</span>
+                <button class="notif-close" onclick="closeNotifications()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="notif-list" id="notif-list"></div>
         </div>
 
         <div class="content">
@@ -732,34 +755,18 @@
             <div class="view active" id="view-overview">
                 <div class="stat-row" id="stat-row"></div>
 
-                <div class="two-col anim-card">
-                    <div style="display:flex;flex-direction:column;gap:var(--sp-16)">
-                        <div class="gauge-card">
-                            <div style="text-align:center">
-                                <div class="gauge-wrap">
-                                    <svg class="gauge-svg" viewBox="0 0 120 120">
-                                        <circle class="gauge-bg" cx="60" cy="60" r="52"/>
-                                        <circle class="gauge-fill" id="gauge-fill" cx="60" cy="60" r="52"
-                                            stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
-                                    </svg>
-                                    <div class="gauge-value" id="gauge-value">0</div>
-                                </div>
-                                <div class="gauge-title">Class Average</div>
-                                <div class="gauge-trend up" id="gauge-trend">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
-                                    <span id="gauge-trend-text">+4 pts this week</span>
-                                </div>
-                            </div>
-                            <div style="flex:1;min-width:0">
-                                <div class="distrib-title" style="margin-bottom:var(--sp-12)">Understanding Distribution</div>
-                                <div class="distrib-bar-wrap" id="distrib-bars"></div>
-                                <div class="distrib-labels"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div>
-                                <div class="distrib-legend">
-                                    <div class="legend-item"><div class="legend-dot bg-red"></div>Critical (0-40)</div>
-                                    <div class="legend-item"><div class="legend-dot bg-yellow"></div>Warning (41-60)</div>
-                                    <div class="legend-item"><div class="legend-dot bg-blue"></div>Good (61-80)</div>
-                                    <div class="legend-item"><div class="legend-dot bg-green"></div>Strong (81-100)</div>
-                                </div>
+                <div class="overview-grid anim-card">
+                    <!-- LEFT: Graph + Topic Health -->
+                    <div class="overview-left">
+                        <div class="distrib-card">
+                            <div class="distrib-title">Understanding Distribution</div>
+                            <div class="distrib-bar-wrap" id="distrib-bars"></div>
+                            <div class="distrib-labels"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div>
+                            <div class="distrib-legend">
+                                <div class="legend-item"><div class="legend-dot bg-red"></div>Critical (0-40)</div>
+                                <div class="legend-item"><div class="legend-dot bg-yellow"></div>Warning (41-60)</div>
+                                <div class="legend-item"><div class="legend-dot bg-blue"></div>Good (61-80)</div>
+                                <div class="legend-item"><div class="legend-dot bg-green"></div>Strong (81-100)</div>
                             </div>
                         </div>
 
@@ -768,24 +775,18 @@
                                 <span class="topic-title">Topic Health Map</span>
                                 <span style="font-size:var(--fs-xs);color:var(--text-tertiary)">7 topics covered</span>
                             </div>
-                            <div id="topic-list"></div>
+                            <div class="topic-scroll" id="topic-list"></div>
                         </div>
                     </div>
 
-                    <div style="display:flex;flex-direction:column;gap:var(--sp-16)">
-                        <div class="attention-card">
-                            <div class="attention-header">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                <span class="attention-title">Needs Attention</span>
-                                <span class="attention-count" id="attn-count">0</span>
-                            </div>
-                            <div id="attention-list"></div>
+                    <!-- RIGHT: Overview (all students, color-coded) -->
+                    <div class="overview-card">
+                        <div class="overview-header">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            <span class="overview-title">Overview</span>
+                            <span class="overview-count" id="overview-count">25</span>
                         </div>
-
-                        <div class="feed-card">
-                            <div class="feed-title">Recent Activity</div>
-                            <div id="feed-list"></div>
-                        </div>
+                        <div class="overview-list" id="overview-list"></div>
                     </div>
                 </div>
             </div>
@@ -807,20 +808,22 @@
                     </div>
                 </div>
                 <div class="roster-table-wrap anim-card">
-                    <table class="roster-table">
-                        <thead>
-                            <tr>
-                                <th onclick="sortRoster('name')" class="sorted">Name <span class="sort-arrow">↑</span></th>
-                                <th onclick="sortRoster('score')">LATENT Score</th>
-                                <th onclick="sortRoster('trend')">Trend</th>
-                                <th onclick="sortRoster('sessions')">Sessions</th>
-                                <th onclick="sortRoster('lastActive')">Last Active</th>
-                                <th onclick="sortRoster('grade')">Canvas Grade</th>
-                                <th onclick="sortRoster('gap')">Gap</th>
-                            </tr>
-                        </thead>
-                        <tbody id="roster-body"></tbody>
-                    </table>
+                    <div class="roster-table-scroll">
+                        <table class="roster-table">
+                            <thead>
+                                <tr>
+                                    <th onclick="sortRoster('name')" class="sorted">Name <span class="sort-arrow">↑</span></th>
+                                    <th onclick="sortRoster('score')">LATENT Score</th>
+                                    <th onclick="sortRoster('trend')">Trend</th>
+                                    <th onclick="sortRoster('sessions')">Sessions</th>
+                                    <th onclick="sortRoster('lastActive')">Last Active</th>
+                                    <th onclick="sortRoster('grade')">Canvas Grade</th>
+                                    <th onclick="sortRoster('gap')">Gap</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roster-body"></tbody>
+                        </table>
+                    </div>
                     <div class="roster-footer" id="roster-footer"></div>
                 </div>
             </div>
@@ -861,36 +864,38 @@
                     <button class="action-btn secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Create Targeted Assignment</button>
                 </div>
 
-                <div class="two-col">
-                    <div style="display:flex;flex-direction:column;gap:var(--sp-16)">
-                        <div class="timeline-card anim-card">
-                            <div class="card-header">
-                                <span class="card-title">Understanding Timeline</span>
-                                <div style="display:flex;gap:var(--sp-12);align-items:center">
-                                    <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>LATENT Score</div>
-                                    <div class="legend-item"><div class="legend-dot" style="background:var(--text-tertiary)"></div>Canvas Grade</div>
+                <div class="student-scroll">
+                    <div style="display:grid;grid-template-columns:5fr 3fr;gap:var(--sp-16)">
+                        <div style="display:flex;flex-direction:column;gap:var(--sp-16)">
+                            <div class="timeline-card anim-card">
+                                <div class="card-header">
+                                    <span class="card-title">Understanding Timeline</span>
+                                    <div style="display:flex;gap:var(--sp-12);align-items:center">
+                                        <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>LATENT Score</div>
+                                        <div class="legend-item"><div class="legend-dot" style="background:var(--text-tertiary)"></div>Canvas Grade</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-chart">
+                                    <svg class="timeline-svg" id="sv-timeline" viewBox="0 0 600 180" preserveAspectRatio="none"></svg>
                                 </div>
                             </div>
-                            <div class="timeline-chart">
-                                <svg class="timeline-svg" id="sv-timeline" viewBox="0 0 600 180" preserveAspectRatio="none"></svg>
+
+                            <div class="session-card anim-card">
+                                <div class="card-title" style="margin-bottom:var(--sp-16)">Session History</div>
+                                <div id="sv-sessions"></div>
                             </div>
                         </div>
 
-                        <div class="session-card anim-card">
-                            <div class="card-title" style="margin-bottom:var(--sp-16)">Session History</div>
-                            <div id="sv-sessions"></div>
-                        </div>
-                    </div>
+                        <div style="display:flex;flex-direction:column;gap:var(--sp-16)">
+                            <div class="radar-card anim-card">
+                                <div class="card-title" style="margin-bottom:var(--sp-16)">Topic Breakdown</div>
+                                <div id="sv-topics" class="radar-list"></div>
+                            </div>
 
-                    <div style="display:flex;flex-direction:column;gap:var(--sp-16)">
-                        <div class="radar-card anim-card">
-                            <div class="card-title" style="margin-bottom:var(--sp-16)">Topic Breakdown</div>
-                            <div id="sv-topics" class="radar-list"></div>
-                        </div>
-
-                        <div class="aha-card anim-card">
-                            <div class="card-title aha-title">✦ Aha Moments</div>
-                            <div id="sv-aha"></div>
+                            <div class="aha-card anim-card">
+                                <div class="card-title aha-title">✦ Aha Moments</div>
+                                <div id="sv-aha"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -921,13 +926,13 @@ const courseData = {
 };
 
 const topics = [
-    { week: 'Week 1', name: 'Social Contract Theory', score: 78, status: '✓' },
-    { week: 'Week 2', name: "Plato's Republic", score: 71, status: '✓' },
-    { week: 'Week 3', name: 'Hobbes & Locke', score: 52, status: '⚠️' },
-    { week: 'Week 4', name: 'Rousseau', score: 41, status: '🔴' },
-    { week: 'Week 5', name: 'Utilitarianism', score: 68, status: '✓' },
-    { week: 'Week 6', name: 'Kantian Ethics', score: 45, status: '🔴' },
-    { week: 'Week 7', name: 'Rawls & Justice', score: 73, status: '✓' },
+    { week: 'Week 1', name: 'Social Contract Theory', score: 78 },
+    { week: 'Week 2', name: "Plato's Republic", score: 71 },
+    { week: 'Week 3', name: 'Hobbes & Locke', score: 52 },
+    { week: 'Week 4', name: 'Rousseau', score: 41 },
+    { week: 'Week 5', name: 'Utilitarianism', score: 68 },
+    { week: 'Week 6', name: 'Kantian Ethics', score: 45 },
+    { week: 'Week 7', name: 'Rawls & Justice', score: 73 },
 ];
 
 const students = [
@@ -971,20 +976,23 @@ const activityFeed = [
     { text: 'Jason M. flagged as surface learner — A- grade, 36 LATENT', time: '1d ago', color: '#ef4444' },
     { text: "Maya W. hasn't engaged in 8 days", time: '1d ago', color: '#ef4444' },
     { text: 'Priya S. achieved 94 LATENT Score — top of class', time: '2d ago', color: '#22c55e' },
+    { text: 'New assignment "Rousseau Essay" synced from Canvas', time: '2d ago', color: '#3b82f6' },
+    { text: '4 students completed week 7 Deep Dives early', time: '3d ago', color: '#22c55e' },
 ];
 
 // ===== HELPERS =====
 function scoreColor(s) { return s <= 40 ? '#ef4444' : s <= 60 ? '#f59e0b' : s <= 80 ? '#3b82f6' : '#22c55e'; }
 function scoreBadgeClass(s) { return s <= 40 ? 'red' : s <= 60 ? 'yellow' : s <= 80 ? 'blue' : 'green'; }
+function scoreGroup(s) { return s <= 40 ? 'red' : s <= 60 ? 'yellow' : s <= 80 ? 'blue' : 'green'; }
+function scoreGroupLabel(g) { return g === 'green' ? 'Strong (81-100)' : g === 'blue' ? 'Good (61-80)' : g === 'yellow' ? 'Warning (41-60)' : 'Critical (0-40)'; }
 function trendIcon(t) { return t === 'up' ? '↑' : t === 'down' ? '↓' : '→'; }
 function isMismatch(s) { return s.canvasGPA >= 3.0 && s.score <= 50; }
 
-// Animated counter
 function animateValue(el, start, end, duration) {
     const startTime = performance.now();
     const step = (now) => {
         const progress = Math.min((now - startTime) / duration, 1);
-        const ease = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+        const ease = 1 - Math.pow(1 - progress, 3);
         const current = Math.round(start + (end - start) * ease);
         el.textContent = current;
         if (progress < 1) requestAnimationFrame(step);
@@ -992,13 +1000,11 @@ function animateValue(el, start, end, duration) {
     requestAnimationFrame(step);
 }
 
-// Smooth bezier path from points
 function bezierPath(points) {
     if (points.length < 2) return '';
     let d = `M ${points[0][0]},${points[0][1]}`;
     for (let i = 1; i < points.length; i++) {
-        const prev = points[i - 1];
-        const curr = points[i];
+        const prev = points[i - 1], curr = points[i];
         const cpx = (prev[0] + curr[0]) / 2;
         d += ` C ${cpx},${prev[1]} ${cpx},${curr[1]} ${curr[0]},${curr[1]}`;
     }
@@ -1022,11 +1028,13 @@ function renderSidebar() {
 
 function renderStats() {
     const el = document.getElementById('stat-row');
+    const surfaceLearners = students.filter(s => isMismatch(s)).length;
     const stats = [
         { label: 'Total Students', value: courseData.totalStudents, sub: `${courseData.activeThisWeek} active this week` },
         { label: 'Class Average', value: courseData.avgScore, sub: `+${courseData.scoreTrend} pts this week`, subClass: 'up' },
         { label: 'Avg Sessions/Week', value: courseData.avgSessions, sub: 'Per student' },
         { label: 'Deep Dives Total', value: courseData.deepDiveTotal, sub: 'Across all students' },
+        { label: 'Surface Learners', value: surfaceLearners, sub: 'High grade, low understanding' },
     ];
     el.innerHTML = stats.map(s => `
         <div class="stat-card">
@@ -1037,16 +1045,6 @@ function renderStats() {
     `).join('');
 }
 
-function renderGauge() {
-    const score = courseData.avgScore;
-    const circ = 326.7;
-    const offset = circ - (score / 100) * circ;
-    const fill = document.getElementById('gauge-fill');
-    fill.style.stroke = scoreColor(score);
-    setTimeout(() => { fill.style.strokeDashoffset = offset; }, 200);
-    animateValue(document.getElementById('gauge-value'), 0, score, 1800);
-}
-
 function renderDistribution() {
     const bins = [0,0,0,0,0,0,0,0,0,0];
     students.forEach(s => { const idx = Math.min(Math.floor(s.score / 10), 9); bins[idx]++; });
@@ -1054,8 +1052,11 @@ function renderDistribution() {
     const el = document.getElementById('distrib-bars');
     el.innerHTML = bins.map((count, i) => {
         const h = max > 0 ? (count / max) * 100 : 0;
+        const minH = count === 0 ? 2 : h;
         const color = i <= 3 ? '#ef4444' : i <= 5 ? '#f59e0b' : i <= 7 ? '#3b82f6' : '#22c55e';
-        return `<div class="distrib-bar" style="height:${h}%;background:${color}">
+        const group = i <= 3 ? 'red' : i <= 5 ? 'yellow' : i <= 7 ? 'blue' : 'green';
+        const opacity = count === 0 ? 'opacity:0.2;' : '';
+        return `<div class="distrib-bar" style="height:${minH}%;background:${color};${opacity}" data-group="${group}" onclick="scrollOverviewToGroup('${group}')">
             <div class="bar-tooltip">${count} student${count !== 1 ? 's' : ''} (${i*10}-${i*10+9})</div>
         </div>`;
     }).join('');
@@ -1070,37 +1071,75 @@ function renderTopics() {
             <span class="topic-name">${t.name}</span>
             <div class="topic-bar-bg"><div class="topic-bar-fill" style="width:${t.score}%;background:${color}"></div></div>
             <span class="topic-score" style="color:${color}">${t.score}%</span>
-            <span class="topic-status">${t.status}</span>
         </div>`;
     }).join('');
 }
 
-function renderAttention() {
-    const atRisk = students.filter(s => s.score <= 50 || s.daysInactive >= 7 || s.trend === 'down')
-        .sort((a, b) => a.score - b.score).slice(0, 6);
-    document.getElementById('attn-count').textContent = atRisk.length;
-    const el = document.getElementById('attention-list');
-    el.innerHTML = atRisk.map(s => `
-        <div class="attention-item ${s.score <= 35 ? 'critical' : ''}" onclick="openStudent(${s.id})">
-            <div class="attn-avatar">${s.initials}</div>
-            <div class="attn-info">
-                <div class="attn-name">${s.name}${isMismatch(s) ? ' <span class="mismatch-flag">⚠ Mismatch</span>' : ''}</div>
-                <div class="attn-gap">${s.gap}</div>
-            </div>
-            <div>
-                <div class="attn-score" style="color:${scoreColor(s.score)}">${s.score}</div>
-                <div class="attn-trend ${s.trend === 'down' ? 'down' : ''}">${trendIcon(s.trend)}</div>
-            </div>
-        </div>
-    `).join('');
+function renderOverview() {
+    // Sort all students by score descending (strong → critical)
+    const sorted = [...students].sort((a, b) => b.score - a.score);
+    const groups = { green: [], blue: [], yellow: [], red: [] };
+    sorted.forEach(s => groups[scoreGroup(s.score)].push(s));
+
+    document.getElementById('overview-count').textContent = students.length;
+    const el = document.getElementById('overview-list');
+    let html = '';
+
+    ['green', 'blue', 'yellow', 'red'].forEach(g => {
+        if (groups[g].length === 0) return;
+        html += `<div class="overview-group-label" id="overview-group-${g}">
+            <span style="color:${g === 'green' ? '#22c55e' : g === 'blue' ? '#3b82f6' : g === 'yellow' ? '#f59e0b' : '#ef4444'}">●</span>
+            ${scoreGroupLabel(g)} (${groups[g].length})
+        </div>`;
+        groups[g].forEach(s => {
+            html += `<div class="overview-item ${g}" onclick="openStudent(${s.id})">
+                <div class="ov-avatar">${s.initials}</div>
+                <div class="ov-info">
+                    <div class="ov-name">${s.name}${isMismatch(s) ? ' <span class="mismatch-flag">⚠</span>' : ''}</div>
+                    <div class="ov-gap">${s.gap === 'None' ? 'No gaps detected' : s.gap}</div>
+                </div>
+                <div class="ov-score" style="color:${scoreColor(s.score)}">${s.score}</div>
+                <div class="ov-trend ${s.trend}">${trendIcon(s.trend)}</div>
+            </div>`;
+        });
+    });
+    el.innerHTML = html;
 }
 
-function renderFeed() {
-    const el = document.getElementById('feed-list');
+// Click bar → scroll overview to that group
+function scrollOverviewToGroup(group) {
+    // Highlight clicked bars
+    document.querySelectorAll('.distrib-bar').forEach(b => b.classList.remove('active-bar'));
+    document.querySelectorAll(`.distrib-bar[data-group="${group}"]`).forEach(b => b.classList.add('active-bar'));
+
+    const list = document.getElementById('overview-list');
+    const target = document.getElementById('overview-group-' + group);
+    if (!list || !target) return;
+
+    // Compute scroll position by summing heights of all siblings before the target (reliable for any layout)
+    let scrollTarget = 0;
+    for (let i = 0; i < list.children.length; i++) {
+        if (list.children[i] === target) break;
+        scrollTarget += list.children[i].offsetHeight;
+    }
+    const maxScroll = list.scrollHeight - list.clientHeight;
+    scrollTarget = Math.max(0, Math.min(scrollTarget, maxScroll));
+    list.scrollTo({ top: scrollTarget, behavior: 'smooth' });
+
+    setTimeout(() => {
+        document.querySelectorAll('.distrib-bar').forEach(b => b.classList.remove('active-bar'));
+    }, 2000);
+}
+
+function renderNotifications() {
+    const el = document.getElementById('notif-list');
     el.innerHTML = activityFeed.map(f => `
-        <div class="feed-item">
-            <div class="feed-dot" style="background:${f.color}"></div>
-            <div style="flex:1">${f.text}<div class="feed-time">${f.time}</div></div>
+        <div class="notif-item">
+            <div class="notif-dot-wrap"><div class="notif-color-dot" style="background:${f.color}"></div></div>
+            <div style="flex:1">
+                <div class="notif-text">${f.text}</div>
+                <div class="notif-time">${f.time}</div>
+            </div>
         </div>
     `).join('');
 }
@@ -1155,7 +1194,6 @@ function setFilter(f, btn) {
 function sortRoster(key) {
     if (currentSort.key === key) currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
     else { currentSort.key = key; currentSort.dir = 'asc'; }
-    // Update headers
     document.querySelectorAll('.roster-table th').forEach(th => {
         th.classList.remove('sorted');
         const arrow = th.querySelector('.sort-arrow');
@@ -1190,13 +1228,11 @@ function openStudent(id) {
     const scoreEl = document.getElementById('sv-score');
     scoreEl.textContent = s.score;
     scoreEl.style.color = scoreColor(s.score);
-
     document.getElementById('sv-canvas-grade').textContent = s.grade;
 
-    // Gap indicator between Canvas grade and LATENT score
     const gapBadge = document.getElementById('sv-gap-badge');
     const mismatch = isMismatch(s);
-    const scoreGPA = s.score / 25; // rough normalize to 4.0
+    const scoreGPA = s.score / 25;
     const gapSize = Math.abs(s.canvasGPA - scoreGPA);
     if (mismatch) {
         gapBadge.className = 'score-gap-indicator danger';
@@ -1212,7 +1248,6 @@ function openStudent(id) {
         gapBadge.textContent = '✓ Scores aligned';
     }
 
-    // Stats
     document.getElementById('sv-stats').innerHTML = [
         { label: 'LATENT Score', value: s.score, sub: s.trend === 'up' ? '+5 this week' : s.trend === 'down' ? '-3 this week' : 'Stable', subClass: s.trend === 'up' ? 'up' : s.trend === 'down' ? 'down' : '' },
         { label: 'Canvas Grade', value: s.grade, sub: `GPA: ${s.canvasGPA}` },
@@ -1222,7 +1257,6 @@ function openStudent(id) {
 
     renderTimeline(s);
 
-    // Topics with per-student variation
     const topicScores = topics.map(t => {
         const variance = (Math.random() - 0.5) * 30;
         const adjusted = Math.max(5, Math.min(98, t.score + variance + (s.score - 62) * 0.3));
@@ -1237,7 +1271,6 @@ function openStudent(id) {
         </div>`;
     }).join('');
 
-    // Sessions
     const sessionData = [
         { topic: `${topics[3].name} Review`, date: 'Today', duration: '23 min', change: s.trend === 'up' ? '+4' : '-2', dir: s.trend === 'up' ? 'up' : 'down' },
         { topic: `${topics[2].name} Deep Dive`, date: 'Yesterday', duration: '18 min', change: '+2', dir: 'up' },
@@ -1252,7 +1285,6 @@ function openStudent(id) {
         </div>
     `).join('');
 
-    // Aha moments
     const firstName = s.name.split(' ')[0];
     const ahas = [
         { time: 'Feb 5, 3:42pm', text: `${firstName} connected Plato's cave allegory to modern media manipulation without prompting.` },
@@ -1270,8 +1302,6 @@ function openStudent(id) {
 function renderTimeline(student) {
     const svg = document.getElementById('sv-timeline');
     const w = 600, h = 180, pad = 30;
-
-    // Generate LATENT score data
     const latentPoints = [];
     let score = student.score + (student.trend === 'down' ? 20 : student.trend === 'up' ? -15 : 5);
     for (let i = 0; i < 8; i++) {
@@ -1280,18 +1310,13 @@ function renderTimeline(student) {
         latentPoints.push(Math.round(score));
     }
     latentPoints[7] = student.score;
-
-    // Generate Canvas grade line (more stable)
     const canvasNorm = student.canvasGPA * 25;
     const canvasPoints = [];
-    for (let i = 0; i < 8; i++) {
-        canvasPoints.push(Math.round(canvasNorm + (Math.random() - 0.5) * 5));
-    }
+    for (let i = 0; i < 8; i++) canvasPoints.push(Math.round(canvasNorm + (Math.random() - 0.5) * 5));
 
     const xStep = (w - pad * 2) / 7;
     const yScale = (v) => pad + ((100 - v) / 100) * (h - pad * 2);
 
-    // Grid lines
     let gridHtml = '';
     [20, 40, 60, 80].forEach(v => {
         const y = yScale(v);
@@ -1299,20 +1324,14 @@ function renderTimeline(student) {
         gridHtml += `<text x="${pad - 6}" y="${y + 4}" fill="var(--text-tertiary)" font-size="10" text-anchor="end">${v}</text>`;
     });
 
-    // Bezier paths
     const latentCoords = latentPoints.map((p, i) => [pad + i * xStep, yScale(p)]);
     const canvasCoords = canvasPoints.map((p, i) => [pad + i * xStep, yScale(p)]);
-    const latentPath = bezierPath(latentCoords);
-    const canvasPath = bezierPath(canvasCoords);
+    const latentPathD = bezierPath(latentCoords);
+    const canvasPathD = bezierPath(canvasCoords);
+    const areaPath = latentPathD + ` L ${pad + 7 * xStep},${h - pad} L ${pad},${h - pad} Z`;
 
-    // Area fill
-    const areaPath = latentPath + ` L ${pad + 7 * xStep},${h - pad} L ${pad},${h - pad} Z`;
-
-    // Week labels
     const weeks = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'Now'];
     const labelHtml = weeks.map((l, i) => `<text x="${pad + i * xStep}" y="${h - 8}" fill="var(--text-tertiary)" font-size="10" text-anchor="middle">${l}</text>`).join('');
-
-    // Dots
     const dotsHtml = latentCoords.map((c, i) => `<circle cx="${c[0]}" cy="${c[1]}" r="${i === 7 ? 5 : 3}" class="timeline-dot"/>`).join('');
 
     svg.innerHTML = `
@@ -1322,8 +1341,8 @@ function renderTimeline(student) {
         </linearGradient></defs>
         ${gridHtml}
         <path d="${areaPath}" fill="url(#tGrad)"/>
-        <path d="${canvasPath}" class="timeline-line canvas" fill="none"/>
-        <path d="${latentPath}" class="timeline-line latent" fill="none"/>
+        <path d="${canvasPathD}" class="timeline-line canvas" fill="none"/>
+        <path d="${latentPathD}" class="timeline-line latent" fill="none"/>
         ${dotsHtml}
         ${labelHtml}
     `;
@@ -1336,8 +1355,7 @@ function showView(view) {
     document.querySelectorAll('.sidebar-item').forEach(item => item.classList.toggle('active', item.dataset.nav === view));
 
     const titles = { overview: 'Course Overview', roster: 'Student Roster', student: 'Student Detail', insights: 'Insights & Analytics' };
-    document.getElementById('top-title').textContent = titles[view] || '';
-    document.getElementById('top-sub').textContent = `${courseData.code} — ${courseData.name} · ${courseData.semester}`;
+    document.getElementById('sidebar-title').textContent = titles[view] || '';
 
     if (view === 'roster') {
         filteredStudents = [...students];
@@ -1346,17 +1364,15 @@ function showView(view) {
         document.getElementById('roster-search-input').value = '';
         filterRoster();
     }
+}
 
-    // Scroll to top
-    document.querySelector('.content').scrollTop = 0;
+function goBack() {
+    // In production, this navigates to marketing page
+    window.history.back();
 }
 
 function selectCourse(idx) {
     document.querySelectorAll('.course-item').forEach((c, i) => c.classList.toggle('active', i === idx));
-}
-
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('collapsed');
 }
 
 // ===== THEME =====
@@ -1368,11 +1384,32 @@ function setTheme(theme) {
 
 function toggleThemeDropdown() {
     document.getElementById('theme-dropdown').classList.toggle('visible');
+    document.getElementById('notif-dropdown').classList.remove('visible');
+}
+
+function toggleNotifications() {
+    const panel = document.getElementById('notif-panel');
+    const overlay = document.getElementById('notif-overlay');
+    const isOpen = panel.classList.contains('visible');
+    if (isOpen) {
+        closeNotifications();
+    } else {
+        panel.classList.add('visible');
+        overlay.classList.add('visible');
+        document.getElementById('notif-dot').style.display = 'none';
+    }
+    document.getElementById('theme-dropdown').classList.remove('visible');
+}
+
+function closeNotifications() {
+    document.getElementById('notif-panel').classList.remove('visible');
+    document.getElementById('notif-overlay').classList.remove('visible');
 }
 
 document.addEventListener('click', (e) => {
-    const dd = document.getElementById('theme-dropdown');
-    if (!e.target.closest('.top-bar-right') && dd.classList.contains('visible')) dd.classList.remove('visible');
+    if (!e.target.closest('.top-bar-right')) {
+        document.getElementById('theme-dropdown').classList.remove('visible');
+    }
 });
 
 // ===== KEYBOARD SHORTCUTS =====
@@ -1383,10 +1420,11 @@ document.addEventListener('keydown', (e) => {
     if (e.key === '3') showView('insights');
     if (e.key === 'Escape') {
         const dd = document.getElementById('theme-dropdown');
+        const np = document.getElementById('notif-panel');
         if (dd.classList.contains('visible')) dd.classList.remove('visible');
+        else if (np.classList.contains('visible')) closeNotifications();
         else if (document.getElementById('view-student').classList.contains('active')) showView('roster');
     }
-    if (e.key === 'b' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); toggleSidebar(); }
     if (e.key === '/' && !e.metaKey) {
         e.preventDefault();
         showView('roster');
@@ -1397,11 +1435,10 @@ document.addEventListener('keydown', (e) => {
 // ===== INIT =====
 renderSidebar();
 renderStats();
-renderGauge();
 renderDistribution();
 renderTopics();
-renderAttention();
-renderFeed();
+renderOverview();
+renderNotifications();
 filteredStudents = [...students];
 renderRoster();
 </script>
