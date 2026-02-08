@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="deep">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LATENT — Professor Dashboard</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         :root {
             --fs-xs: clamp(9px, 0.3vw + 5px, 11px);
             --fs-sm: clamp(11px, 0.2vw + 7px, 13px);
@@ -16,750 +16,1394 @@
             --fs-xl: clamp(17px, 0.4vw + 10px, 21px);
             --fs-2xl: clamp(21px, 0.5vw + 12px, 26px);
             --fs-3xl: clamp(26px, 0.6vw + 14px, 34px);
+            --fs-4xl: clamp(30px, 0.8vw + 16px, 40px);
+            --fs-hero: clamp(40px, 1.2vw + 20px, 64px);
+
+            --sp-2: clamp(2px, 0.1vw + 1px, 3px);
             --sp-4: clamp(3px, 0.15vw + 2px, 5px);
+            --sp-6: clamp(5px, 0.15vw + 3px, 7px);
             --sp-8: clamp(7px, 0.2vw + 4px, 10px);
+            --sp-10: clamp(9px, 0.2vw + 5px, 12px);
             --sp-12: clamp(10px, 0.25vw + 6px, 14px);
             --sp-16: clamp(14px, 0.3vw + 8px, 18px);
             --sp-20: clamp(16px, 0.4vw + 10px, 22px);
             --sp-24: clamp(20px, 0.4vw + 12px, 26px);
             --sp-32: clamp(24px, 0.6vw + 14px, 34px);
+
             --r-sm: clamp(5px, 0.15vw + 3px, 7px);
             --r-md: clamp(8px, 0.2vw + 5px, 11px);
             --r-lg: clamp(10px, 0.3vw + 6px, 14px);
             --r-xl: clamp(12px, 0.4vw + 7px, 18px);
+
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        
+
+        /* ===== THEMES (matching v14 exactly) ===== */
         [data-theme="clear"] {
-            --bg: #f5f5f7;
-            --bg-card: #ffffff;
-            --text: #1d1d1f;
-            --text-secondary: rgba(29, 29, 31, 0.5);
-            --text-tertiary: rgba(29, 29, 31, 0.35);
-            --border: rgba(0, 0, 0, 0.06);
-            --shadow: rgba(0, 0, 0, 0.08);
-            --btn-bg: #1d1d1f;
-            --btn-text: #ffffff;
-            --badge-bg: rgba(29, 29, 31, 0.05);
-            --accent: #1d1d1f;
-            --accent-light: rgba(29, 29, 31, 0.1);
+            --bg: #f5f5f7; --bg-card: #ffffff; --bg-sidebar: #fafafa;
+            --text: #1d1d1f; --text-secondary: rgba(29,29,31,0.5); --text-tertiary: rgba(29,29,31,0.35);
+            --border: rgba(0,0,0,0.06); --shadow: rgba(0,0,0,0.08);
+            --btn-bg: #1d1d1f; --btn-text: #ffffff;
+            --badge-bg: rgba(29,29,31,0.05);
+            --accent: #1d1d1f; --accent-light: rgba(29,29,31,0.1);
         }
         [data-theme="deep"] {
-            --bg: #0a0a0a;
-            --bg-card: #161616;
-            --text: #f5f5f7;
-            --text-secondary: rgba(245, 245, 247, 0.5);
-            --text-tertiary: rgba(245, 245, 247, 0.35);
-            --border: rgba(255, 255, 255, 0.08);
-            --shadow: rgba(0, 0, 0, 0.4);
-            --btn-bg: #f5f5f7;
-            --btn-text: #0a0a0a;
-            --badge-bg: rgba(245, 245, 247, 0.08);
-            --accent: #f5f5f7;
-            --accent-light: rgba(245, 245, 247, 0.1);
+            --bg: #0a0a0a; --bg-card: #161616; --bg-sidebar: #111111;
+            --text: #f5f5f7; --text-secondary: rgba(245,245,247,0.5); --text-tertiary: rgba(245,245,247,0.35);
+            --border: rgba(255,255,255,0.08); --shadow: rgba(0,0,0,0.4);
+            --btn-bg: #f5f5f7; --btn-text: #0a0a0a;
+            --badge-bg: rgba(245,245,247,0.08);
+            --accent: #f5f5f7; --accent-light: rgba(245,245,247,0.1);
         }
         [data-theme="emerge"] {
-            --bg: #1a1215;
-            --bg-card: #2d1f24;
-            --text: #f5f0f1;
-            --text-secondary: rgba(245, 240, 241, 0.6);
-            --text-tertiary: rgba(245, 240, 241, 0.35);
-            --border: rgba(232, 121, 149, 0.15);
-            --shadow: rgba(0, 0, 0, 0.4);
-            --btn-bg: #e87995;
-            --btn-text: #1a1215;
-            --badge-bg: rgba(232, 121, 149, 0.12);
-            --accent: #e87995;
-            --accent-light: rgba(232, 121, 149, 0.15);
+            --bg: #1a1215; --bg-card: #2d1f24; --bg-sidebar: #221a1d;
+            --text: #f5f0f1; --text-secondary: rgba(245,240,241,0.6); --text-tertiary: rgba(245,240,241,0.35);
+            --border: rgba(232,121,149,0.15); --shadow: rgba(0,0,0,0.4);
+            --btn-bg: #e87995; --btn-text: #1a1215;
+            --badge-bg: rgba(232,121,149,0.12);
+            --accent: #e87995; --accent-light: rgba(232,121,149,0.15);
         }
         [data-theme="grow"] {
-            --bg: #0d1a12;
-            --bg-card: #152417;
-            --text: #e8f5e9;
-            --text-secondary: rgba(232, 245, 233, 0.6);
-            --text-tertiary: rgba(232, 245, 233, 0.35);
-            --border: rgba(76, 175, 80, 0.15);
-            --shadow: rgba(0, 0, 0, 0.4);
-            --btn-bg: #4caf50;
-            --btn-text: #0d1a12;
-            --badge-bg: rgba(76, 175, 80, 0.12);
-            --accent: #4caf50;
-            --accent-light: rgba(76, 175, 80, 0.15);
+            --bg: #0d1a12; --bg-card: #152417; --bg-sidebar: #0f1e13;
+            --text: #e8f5e9; --text-secondary: rgba(232,245,233,0.6); --text-tertiary: rgba(232,245,233,0.35);
+            --border: rgba(76,175,80,0.15); --shadow: rgba(0,0,0,0.4);
+            --btn-bg: #4caf50; --btn-text: #0d1a12;
+            --badge-bg: rgba(76,175,80,0.12);
+            --accent: #4caf50; --accent-light: rgba(76,175,80,0.15);
         }
-        
+
+        /* Scrollbars */
+        * { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+        *::-webkit-scrollbar { width: 4px; height: 4px; }
+        *::-webkit-scrollbar-track { background: transparent; }
+        *::-webkit-scrollbar-thumb { background: var(--text-tertiary); border-radius: 4px; }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            transition: background 0.4s ease, color 0.4s ease;
+            background: var(--bg); color: var(--text);
+            height: 100vh; overflow: hidden;
+            transition: background 0.5s var(--ease-out), color 0.5s var(--ease-out);
         }
-        
-        .professor-layout {
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
+
+        /* ===== LAYOUT ===== */
+        .app-shell { display: flex; height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px; min-width: 260px;
+            background: var(--bg-sidebar); border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            transition: all 0.4s var(--ease-out);
         }
-        
-        /* Left sidebar */
-        .prof-sidebar {
-            width: clamp(200px, 16vw, 260px);
-            flex-shrink: 0;
-            border-right: 1px solid var(--border);
-            background: color-mix(in srgb, var(--bg-card) 60%, var(--bg));
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+        .sidebar.collapsed { width: 0; min-width: 0; overflow: hidden; border-right: none; }
+        .sidebar-header {
+            padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
         }
-        .prof-sidebar-logo {
-            padding: var(--sp-20) var(--sp-24);
-            font-size: var(--fs-xl);
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            border-bottom: 1px solid var(--border);
+        .sidebar-brand { display: flex; align-items: center; gap: var(--sp-10); }
+        .sidebar-logo { font-size: var(--fs-lg); font-weight: 700; letter-spacing: 0.04em; }
+        .sidebar-badge {
+            font-size: var(--fs-xs); font-weight: 600; color: var(--text-secondary);
+            background: var(--badge-bg); padding: 3px 8px; border-radius: 100px;
         }
-        .prof-sidebar-nav {
-            padding: var(--sp-16) 0;
-            flex: 1;
-            overflow-y: auto;
+
+        .sidebar-section { padding: 16px 12px 8px; }
+        .sidebar-section-label {
+            font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.12em; color: var(--text-tertiary);
+            padding: 0 8px; margin-bottom: var(--sp-8);
         }
-        .prof-nav-label {
-            font-size: var(--fs-xs);
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-tertiary);
-            padding: 0 var(--sp-20);
-            margin-bottom: var(--sp-8);
+
+        .sidebar-item {
+            display: flex; align-items: center; gap: var(--sp-10);
+            padding: 10px 12px; border-radius: var(--r-md);
+            cursor: pointer; font-size: var(--fs-base); font-weight: 500;
+            color: var(--text-secondary); transition: all 0.2s var(--ease-out);
+            position: relative; overflow: hidden;
         }
-        .prof-nav-item {
-            display: flex;
-            align-items: center;
-            gap: var(--sp-12);
-            padding: var(--sp-10) var(--sp-20);
-            font-size: var(--fs-base);
-            font-weight: 500;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: color 0.2s, background 0.2s;
-            border-left: 3px solid transparent;
+        .sidebar-item::before {
+            content: ''; position: absolute; inset: 0;
+            background: var(--badge-bg); opacity: 0;
+            transition: opacity 0.2s;
         }
-        .prof-nav-item:hover { color: var(--text); background: var(--badge-bg); }
-        .prof-nav-item.active { color: var(--text); background: var(--accent-light); border-left-color: var(--accent); }
-        .prof-nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.8; }
-        .prof-course-list {
-            padding: 0 var(--sp-12);
-            margin-top: var(--sp-8);
+        .sidebar-item:hover::before { opacity: 1; }
+        .sidebar-item:hover { color: var(--text); }
+        .sidebar-item.active { background: var(--btn-bg); color: var(--btn-text); }
+        .sidebar-item.active::before { display: none; }
+        .sidebar-item svg { width: 16px; height: 16px; flex-shrink: 0; position: relative; z-index: 1; }
+        .sidebar-item span:not(.item-count) { position: relative; z-index: 1; }
+        .sidebar-item .item-count {
+            margin-left: auto; font-size: var(--fs-xs); font-weight: 600;
+            color: var(--text-tertiary); background: var(--badge-bg);
+            padding: 2px 7px; border-radius: 100px; position: relative; z-index: 1;
         }
-        .prof-course-chip {
-            padding: var(--sp-8) var(--sp-12);
-            font-size: var(--fs-sm);
-            border-radius: var(--r-md);
-            margin-bottom: var(--sp-4);
-            cursor: pointer;
-            background: var(--badge-bg);
-            border: 1px solid transparent;
-            transition: all 0.2s;
+        .sidebar-item.active .item-count { background: rgba(255,255,255,0.15); color: var(--btn-text); }
+        .sidebar-item .kbd {
+            margin-left: auto; font-size: 9px; font-weight: 600;
+            color: var(--text-tertiary); background: var(--badge-bg);
+            padding: 2px 5px; border-radius: 3px; position: relative; z-index: 1;
+            font-family: 'SF Mono', SFMono-Regular, Consolas, monospace;
+            opacity: 0.5;
         }
-        .prof-course-chip:hover { border-color: var(--border); }
-        .prof-course-chip.active { background: var(--accent-light); border-color: var(--accent); color: var(--text); }
-        .prof-course-chip .code { color: var(--text-tertiary); font-size: var(--fs-xs); }
-        
-        /* Main area */
-        .prof-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-            overflow: hidden;
+
+        .sidebar-courses { flex: 1; overflow-y: auto; padding: 8px 12px; }
+        .course-item {
+            display: flex; align-items: center; gap: var(--sp-10);
+            padding: 10px 12px; border-radius: var(--r-md);
+            cursor: pointer; margin-bottom: 2px; transition: all 0.2s var(--ease-out);
         }
-        .prof-topbar {
-            flex-shrink: 0;
-            padding: var(--sp-16) var(--sp-24);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: color-mix(in srgb, var(--bg-card) 50%, transparent);
-            backdrop-filter: blur(12px);
-        }
-        .prof-topbar-left { display: flex; align-items: center; gap: var(--sp-20); }
-        .prof-course-title { font-size: var(--fs-lg); font-weight: 600; }
-        .prof-course-meta { font-size: var(--fs-sm); color: var(--text-tertiary); margin-top: 2px; }
-        .prof-topbar-right { display: flex; align-items: center; gap: var(--sp-12); }
-        .prof-theme-select {
-            padding: var(--sp-6) var(--sp-10);
-            font-size: var(--fs-sm);
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--r-md);
-            color: var(--text);
-            cursor: pointer;
+        .course-item:hover { background: var(--badge-bg); }
+        .course-item.active { background: var(--accent-light); }
+        .course-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .course-info { flex: 1; min-width: 0; }
+        .course-code { font-size: var(--fs-xs); font-weight: 600; color: var(--text-tertiary); }
+        .course-name { font-size: var(--fs-sm); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .course-score { font-size: var(--fs-sm); font-weight: 700; }
+
+        .sidebar-footer {
+            padding: 12px; border-top: 1px solid var(--border);
+            display: flex; align-items: center; gap: var(--sp-10);
         }
         .prof-avatar {
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            background: var(--accent);
-            color: var(--btn-text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: var(--fs-sm);
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--btn-bg); color: var(--btn-text);
+            display: flex; align-items: center; justify-content: center;
+            font-size: var(--fs-sm); font-weight: 600;
         }
-        
-        .prof-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: var(--sp-24);
+        .prof-info { flex: 1; min-width: 0; }
+        .prof-name { font-size: var(--fs-sm); font-weight: 600; }
+        .prof-role { font-size: var(--fs-xs); color: var(--text-tertiary); }
+
+        /* Main Area */
+        .main-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+        .top-bar {
+            height: 56px; background: var(--bg-card); border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 24px; flex-shrink: 0;
+            transition: background 0.5s var(--ease-out);
         }
-        
-        .prof-screen { display: none; }
-        .prof-screen.active { display: block; animation: fadeIn 0.35s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        /* Screen 1: Course Overview */
-        .overview-header { margin-bottom: var(--sp-24); }
-        .overview-header h1 { font-size: var(--fs-2xl); font-weight: 700; letter-spacing: -0.02em; }
-        .overview-header p { font-size: var(--fs-base); color: var(--text-secondary); margin-top: var(--sp-4); }
-        .overview-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--sp-24);
+        .top-bar-left { display: flex; align-items: center; gap: var(--sp-12); }
+        .top-bar-title { font-size: var(--fs-lg); font-weight: 600; }
+        .top-bar-sub { font-size: var(--fs-sm); color: var(--text-tertiary); }
+        .top-bar-right { display: flex; align-items: center; gap: var(--sp-8); }
+        .toggle-sidebar-btn {
+            width: 36px; height: 36px; border-radius: var(--r-md);
+            border: 1px solid var(--border); background: transparent;
+            color: var(--text-secondary); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s var(--ease-out);
         }
-        @media (max-width: 900px) { .overview-grid { grid-template-columns: 1fr; } }
-        .overview-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--r-xl);
-            padding: var(--sp-24);
-            transition: box-shadow 0.2s;
+        .toggle-sidebar-btn:hover { background: var(--badge-bg); color: var(--text); }
+        .toggle-sidebar-btn svg { width: 16px; height: 16px; }
+        .top-btn {
+            width: 36px; height: 36px; border-radius: var(--r-md);
+            border: 1px solid var(--border); background: transparent;
+            color: var(--text-secondary); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s var(--ease-out);
         }
-        .overview-card:hover { box-shadow: 0 8px 24px var(--shadow); }
-        .overview-card-title { font-size: var(--fs-sm); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); margin-bottom: var(--sp-16); }
-        
-        /* Class meter */
-        .class-meter-wrap { display: flex; align-items: center; gap: var(--sp-24); flex-wrap: wrap; }
-        .class-meter-circle {
-            width: 140px; height: 140px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            font-weight: 700;
-            flex-shrink: 0;
+        .top-btn:hover { background: var(--badge-bg); color: var(--text); }
+        .top-btn svg { width: 16px; height: 16px; }
+
+        /* Theme Dropdown */
+        .theme-dropdown {
+            position: absolute; top: calc(100% + 8px); right: 0;
+            width: 200px; background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--r-xl); box-shadow: 0 8px 32px var(--shadow);
+            padding: var(--sp-12); z-index: 999;
+            opacity: 0; visibility: hidden; transform: translateY(-8px) scale(0.96);
+            transition: all 0.25s var(--ease-out);
         }
-        .class-meter-circle.green { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
-        .class-meter-circle.blue { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
-        .class-meter-circle.yellow { background: rgba(234, 179, 8, 0.2); color: #eab308; }
-        .class-meter-circle.red { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-        .class-meter-info { flex: 1; min-width: 0; }
-        .class-meter-trend { display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-sm); font-weight: 600; margin-top: var(--sp-4); }
-        .class-meter-trend.up { color: #22c55e; }
-        .class-meter-trend.down { color: #ef4444; }
-        
-        /* Distribution bar */
-        .dist-bars { display: flex; flex-direction: column; gap: var(--sp-12); }
-        .dist-row { display: flex; align-items: center; gap: var(--sp-12); font-size: var(--fs-sm); }
-        .dist-label { width: 100px; color: var(--text-secondary); }
-        .dist-bar-wrap { flex: 1; height: 24px; background: var(--badge-bg); border-radius: var(--r-sm); overflow: hidden; display: flex; }
-        .dist-bar { height: 100%; border-radius: var(--r-sm); transition: width 0.4s ease; }
-        .dist-count { width: 60px; text-align: right; font-weight: 600; color: var(--text-tertiary); }
-        
-        /* Topic health */
-        .topic-health-list { display: flex; flex-direction: column; gap: var(--sp-8); }
-        .topic-health-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: var(--sp-10) var(--sp-12);
-            background: var(--badge-bg);
-            border-radius: var(--r-md);
-            cursor: pointer;
-            transition: background 0.2s;
+        .theme-dropdown.visible { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-8); }
+        .theme-opt {
+            display: flex; flex-direction: column; align-items: center; gap: var(--sp-6);
+            cursor: pointer; padding: 8px 6px; border-radius: var(--r-md);
+            border: 2px solid transparent; transition: all 0.2s var(--ease-out);
         }
-        .topic-health-item:hover { background: var(--accent-light); }
-        .topic-health-item .name { font-weight: 500; }
-        .topic-health-item .pct { font-size: var(--fs-sm); font-weight: 600; }
-        .topic-health-item .pct.hi { color: #22c55e; }
-        .topic-health-item .pct.mid { color: #eab308; }
-        .topic-health-item .pct.lo { color: #ef4444; }
-        
-        /* Needs attention */
-        .attention-list { display: flex; flex-direction: column; gap: var(--sp-8); }
+        .theme-opt:hover { background: var(--badge-bg); }
+        .theme-opt.active { border-color: var(--accent); background: var(--accent-light); }
+        .theme-swatch {
+            width: 44px; height: 30px; border-radius: var(--r-sm);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        }
+        .theme-opt span { font-size: var(--fs-xs); font-weight: 500; color: var(--text-secondary); }
+        .theme-opt.active span { color: var(--text); font-weight: 600; }
+
+        .content { flex: 1; overflow-y: auto; overflow-x: hidden; padding: clamp(16px, 2.5vw, 32px); }
+
+        /* ===== VIEWS ===== */
+        .view { display: none; flex-direction: column; gap: var(--sp-24); }
+        .view.active { display: flex; }
+
+        /* Staggered card entrance */
+        .view.active .anim-card {
+            animation: cardIn 0.5s var(--ease-out) both;
+        }
+        .view.active .anim-card:nth-child(1) { animation-delay: 0ms; }
+        .view.active .anim-card:nth-child(2) { animation-delay: 50ms; }
+        .view.active .anim-card:nth-child(3) { animation-delay: 100ms; }
+        .view.active .anim-card:nth-child(4) { animation-delay: 150ms; }
+        .view.active .anim-card:nth-child(5) { animation-delay: 200ms; }
+        .view.active .anim-card:nth-child(6) { animation-delay: 250ms; }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stat row stagger */
+        .stat-row .stat-card {
+            animation: cardIn 0.5s var(--ease-out) both;
+        }
+        .stat-row .stat-card:nth-child(1) { animation-delay: 0ms; }
+        .stat-row .stat-card:nth-child(2) { animation-delay: 60ms; }
+        .stat-row .stat-card:nth-child(3) { animation-delay: 120ms; }
+        .stat-row .stat-card:nth-child(4) { animation-delay: 180ms; }
+
+        /* ===== CARDS ===== */
+        .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-12); }
+        .stat-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--r-lg); padding: var(--sp-20);
+            transition: all 0.3s var(--ease-out);
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px var(--shadow); }
+        .stat-label { font-size: var(--fs-sm); color: var(--text-secondary); margin-bottom: var(--sp-6); }
+        .stat-value { font-size: var(--fs-2xl); font-weight: 700; letter-spacing: -0.02em; margin-bottom: var(--sp-4); }
+        .stat-sub { font-size: var(--fs-xs); color: var(--text-tertiary); }
+        .stat-sub.up { color: #22c55e; }
+        .stat-sub.down { color: #ef4444; }
+
+        /* Score Gauge */
+        .gauge-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--r-xl); padding: var(--sp-24);
+            display: flex; align-items: center; gap: var(--sp-32);
+            transition: all 0.3s var(--ease-out);
+        }
+        .gauge-wrap { position: relative; width: 160px; height: 160px; flex-shrink: 0; }
+        .gauge-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+        .gauge-bg { fill: none; stroke: var(--badge-bg); stroke-width: 10; }
+        .gauge-fill {
+            fill: none; stroke-width: 10; stroke-linecap: round;
+            transition: stroke-dashoffset 1.8s var(--ease-out), stroke 0.5s;
+        }
+        .gauge-value {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: var(--fs-4xl); font-weight: 700;
+            font-family: 'SF Mono', SFMono-Regular, Consolas, monospace;
+        }
+        .gauge-title { font-size: var(--fs-md); font-weight: 600; margin-bottom: var(--sp-4); }
+        .gauge-trend {
+            display: flex; align-items: center; gap: var(--sp-6);
+            font-size: var(--fs-sm); font-weight: 600;
+        }
+        .gauge-trend.up { color: #22c55e; }
+        .gauge-trend.down { color: #ef4444; }
+        .gauge-trend svg { width: 14px; height: 14px; }
+
+        /* Distribution */
+        .distrib-title { font-size: var(--fs-md); font-weight: 600; }
+        .distrib-bar-wrap { display: flex; gap: 3px; height: 100px; align-items: flex-end; }
+        .distrib-bar {
+            flex: 1; border-radius: 4px 4px 0 0;
+            transition: height 0.8s var(--ease-out), opacity 0.15s;
+            cursor: pointer; position: relative;
+            animation: barGrow 0.8s var(--ease-out) both;
+        }
+        .distrib-bar:nth-child(1) { animation-delay: 200ms; }
+        .distrib-bar:nth-child(2) { animation-delay: 240ms; }
+        .distrib-bar:nth-child(3) { animation-delay: 280ms; }
+        .distrib-bar:nth-child(4) { animation-delay: 320ms; }
+        .distrib-bar:nth-child(5) { animation-delay: 360ms; }
+        .distrib-bar:nth-child(6) { animation-delay: 400ms; }
+        .distrib-bar:nth-child(7) { animation-delay: 440ms; }
+        .distrib-bar:nth-child(8) { animation-delay: 480ms; }
+        .distrib-bar:nth-child(9) { animation-delay: 520ms; }
+        .distrib-bar:nth-child(10) { animation-delay: 560ms; }
+        @keyframes barGrow {
+            from { transform: scaleY(0); transform-origin: bottom; }
+            to { transform: scaleY(1); transform-origin: bottom; }
+        }
+        .distrib-bar:hover { opacity: 0.8; }
+        .distrib-bar .bar-tooltip {
+            position: absolute; top: -32px; left: 50%; transform: translateX(-50%);
+            background: var(--text); color: var(--bg); padding: 4px 10px;
+            border-radius: var(--r-sm); font-size: var(--fs-xs); font-weight: 600;
+            white-space: nowrap; opacity: 0; transition: opacity 0.2s;
+            pointer-events: none;
+        }
+        .distrib-bar .bar-tooltip::after {
+            content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+            border: 4px solid transparent; border-top-color: var(--text);
+        }
+        .distrib-bar:hover .bar-tooltip { opacity: 1; }
+        .distrib-labels { display: flex; justify-content: space-between; margin-top: var(--sp-8); font-size: var(--fs-xs); color: var(--text-tertiary); }
+        .distrib-legend { display: flex; gap: var(--sp-16); margin-top: var(--sp-12); flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: var(--sp-6); font-size: var(--fs-xs); color: var(--text-secondary); }
+        .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+        /* Two column layout */
+        .two-col { display: grid; grid-template-columns: 5fr 3fr; gap: var(--sp-16); }
+
+        /* Topic Health */
+        .topic-card, .attention-card, .feed-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--r-xl); padding: var(--sp-24);
+            transition: all 0.3s var(--ease-out);
+        }
+        .topic-header, .attention-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-16); }
+        .topic-title, .attention-title, .feed-title { font-size: var(--fs-md); font-weight: 600; }
+        .topic-row {
+            display: flex; align-items: center; gap: var(--sp-12);
+            padding: 10px var(--sp-12); border-radius: var(--r-md);
+            cursor: pointer; transition: all 0.15s var(--ease-out);
+        }
+        .topic-row:hover { background: var(--badge-bg); transform: translateX(2px); }
+        .topic-week { font-size: var(--fs-xs); font-weight: 600; color: var(--text-tertiary); min-width: 50px; }
+        .topic-name { flex: 1; font-size: var(--fs-base); font-weight: 500; }
+        .topic-bar-bg { width: 100px; height: 6px; background: var(--badge-bg); border-radius: 3px; overflow: hidden; }
+        .topic-bar-fill { height: 100%; border-radius: 3px; transition: width 1s var(--ease-out); }
+        .topic-score { font-size: var(--fs-sm); font-weight: 700; min-width: 36px; text-align: right; }
+        .topic-status { font-size: var(--fs-base); min-width: 20px; text-align: center; }
+
+        /* Needs Attention */
+        .attention-header { display: flex; align-items: center; gap: var(--sp-8); margin-bottom: var(--sp-16); }
+        .attention-header svg { width: 18px; height: 18px; color: #f59e0b; }
+        .attention-count {
+            margin-left: auto; font-size: var(--fs-xs); font-weight: 600;
+            color: var(--text-tertiary); background: var(--badge-bg);
+            padding: 3px 10px; border-radius: 100px;
+        }
         .attention-item {
-            padding: var(--sp-12);
-            background: var(--badge-bg);
-            border-left: 3px solid #f59e0b;
-            border-radius: var(--r-md);
-            cursor: pointer;
-            transition: all 0.2s;
+            display: flex; align-items: center; gap: var(--sp-12);
+            padding: 12px var(--sp-12); border-radius: var(--r-md);
+            border-left: 3px solid #f59e0b; margin-bottom: var(--sp-8);
+            background: var(--bg); cursor: pointer; transition: all 0.2s var(--ease-out);
         }
+        .attention-item:hover { box-shadow: 0 2px 12px var(--shadow); transform: translateX(3px); }
         .attention-item.critical { border-left-color: #ef4444; }
-        .attention-item:hover { background: var(--accent-light); }
-        .attention-item .name { font-weight: 600; margin-bottom: 2px; }
-        .attention-item .gap { font-size: var(--fs-sm); color: var(--text-tertiary); }
-        .attention-item .score { font-size: var(--fs-xs); font-weight: 700; color: #f59e0b; margin-top: 4px; }
-        .attention-item.critical .score { color: #ef4444; }
-        .btn-send-rec { margin-top: var(--sp-8); font-size: var(--fs-sm); padding: var(--sp-6) var(--sp-12); background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: var(--r-md); cursor: pointer; transition: opacity 0.2s; }
-        .btn-send-rec:hover { opacity: 0.9; }
-        
-        /* Recent activity */
-        .activity-list { display: flex; flex-direction: column; gap: var(--sp-8); }
-        .activity-item { font-size: var(--fs-sm); color: var(--text-secondary); padding: var(--sp-6) 0; border-bottom: 1px solid var(--border); }
-        .activity-item:last-child { border-bottom: none; }
-        
-        /* Screen 2: Roster */
-        .roster-toolbar { display: flex; flex-wrap: wrap; gap: var(--sp-12); margin-bottom: var(--sp-20); align-items: center; }
-        .roster-toolbar select, .roster-toolbar input {
-            padding: var(--sp-8) var(--sp-12);
-            font-size: var(--fs-sm);
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--r-md);
-            color: var(--text);
+        .attn-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--badge-bg); display: flex; align-items: center; justify-content: center;
+            font-size: var(--fs-xs); font-weight: 600; color: var(--text-secondary); flex-shrink: 0;
         }
-        .roster-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--r-xl); background: var(--bg-card); }
-        .roster-table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
-        .roster-table th, .roster-table td { padding: var(--sp-12) var(--sp-16); text-align: left; border-bottom: 1px solid var(--border); }
-        .roster-table th { font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
-        .roster-table tr:last-child td { border-bottom: none; }
-        .roster-table tr:hover td { background: var(--badge-bg); }
-        .roster-table tr.clickable { cursor: pointer; }
-        .score-cell { font-weight: 600; }
-        .score-cell.hi { color: #22c55e; }
-        .score-cell.mid { color: #eab308; }
-        .score-cell.lo { color: #ef4444; }
-        .trend-up { color: #22c55e; }
-        .trend-down { color: #ef4444; }
-        .trend-stable { color: var(--text-tertiary); }
-        .mismatch-badge { font-size: 10px; padding: 2px 6px; background: #f59e0b; color: #1d1d1f; border-radius: var(--r-sm); font-weight: 700; margin-left: 4px; }
-        
-        /* Screen 3: Student detail */
-        .student-detail-back { display: inline-flex; align-items: center; gap: var(--sp-8); font-size: var(--fs-base); color: var(--text-secondary); cursor: pointer; margin-bottom: var(--sp-24); transition: color 0.2s; }
-        .student-detail-back:hover { color: var(--text); }
-        .student-header {
-            display: flex;
-            align-items: flex-start;
-            gap: var(--sp-24);
-            margin-bottom: var(--sp-32);
-            padding-bottom: var(--sp-24);
+        .attn-info { flex: 1; min-width: 0; }
+        .attn-name { font-size: var(--fs-base); font-weight: 600; }
+        .attn-gap { font-size: var(--fs-sm); color: var(--text-tertiary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .attn-score { font-size: var(--fs-lg); font-weight: 700; min-width: 40px; text-align: right; }
+        .attn-trend { font-size: var(--fs-xs); text-align: right; }
+        .attn-trend.down { color: #ef4444; }
+
+        /* Activity Feed */
+        .feed-title { margin-bottom: var(--sp-12); }
+        .feed-item {
+            display: flex; gap: var(--sp-10); padding: var(--sp-8) 0;
+            font-size: var(--fs-sm); color: var(--text-secondary);
             border-bottom: 1px solid var(--border);
         }
-        .student-avatar-lg { width: 72px; height: 72px; border-radius: 50%; background: var(--accent); color: var(--btn-text); display: flex; align-items: center; justify-content: center; font-size: var(--fs-2xl); font-weight: 600; flex-shrink: 0; }
-        .student-header-info { flex: 1; min-width: 0; }
-        .student-header-name { font-size: var(--fs-2xl); font-weight: 700; margin-bottom: var(--sp-4); }
-        .student-header-meta { font-size: var(--fs-sm); color: var(--text-tertiary); margin-bottom: var(--sp-12); }
-        .student-header-score { font-size: var(--fs-3xl); font-weight: 700; }
-        .student-header-score.green { color: #22c55e; }
-        .student-header-score.blue { color: #3b82f6; }
-        .student-header-score.yellow { color: #eab308; }
-        .student-header-score.red { color: #ef4444; }
-        .student-section { margin-bottom: var(--sp-32); }
-        .student-section-title { font-size: var(--fs-base); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-tertiary); margin-bottom: var(--sp-16); }
-        .timeline-chart { height: 120px; background: var(--badge-bg); border-radius: var(--r-md); padding: var(--sp-16); display: flex; align-items: flex-end; gap: 4px; }
-        .timeline-bar { flex: 1; min-width: 4px; background: var(--accent); border-radius: 2px; transition: height 0.3s; }
-        .topic-radar-wrap { display: flex; flex-wrap: wrap; gap: var(--sp-12); }
-        .topic-chip { padding: var(--sp-8) var(--sp-16); background: var(--badge-bg); border-radius: 100px; font-size: var(--fs-sm); display: inline-flex; align-items: center; gap: var(--sp-8); }
-        .topic-chip .pct { font-weight: 700; }
-        .session-list { display: flex; flex-direction: column; gap: var(--sp-8); }
-        .session-item { padding: var(--sp-12); background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--r-md); }
-        .session-item .when { font-size: var(--fs-xs); color: var(--text-tertiary); margin-bottom: 4px; }
-        .session-item .topic { font-weight: 600; margin-bottom: 4px; }
-        .session-item .aha { font-size: var(--fs-sm); color: var(--text-secondary); font-style: italic; margin-top: 6px; padding-left: 8px; border-left: 2px solid var(--accent); }
-        .recommended-actions { display: flex; flex-wrap: wrap; gap: var(--sp-12); }
-        .btn-action { padding: var(--sp-10) var(--sp-16); font-size: var(--fs-base); background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: var(--r-md); cursor: pointer; transition: opacity 0.2s; }
-        .btn-action:hover { opacity: 0.9; }
-        .btn-action.secondary { background: var(--badge-bg); color: var(--text); border: 1px solid var(--border); }
+        .feed-item:last-child { border-bottom: none; }
+        .feed-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+        .feed-time { font-size: var(--fs-xs); color: var(--text-tertiary); margin-top: 2px; }
+
+        /* ===== STUDENT ROSTER ===== */
+        .roster-controls {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: var(--sp-12);
+        }
+        .roster-search {
+            display: flex; align-items: center; gap: var(--sp-8);
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--r-md); padding: 0 14px; height: 40px; min-width: 260px;
+            transition: border-color 0.2s;
+        }
+        .roster-search:focus-within { border-color: var(--accent); }
+        .roster-search svg { width: 16px; height: 16px; color: var(--text-tertiary); flex-shrink: 0; }
+        .roster-search input {
+            border: none; background: transparent; font-size: var(--fs-base);
+            color: var(--text); outline: none; width: 100%; font-family: inherit;
+        }
+        .roster-search input::placeholder { color: var(--text-tertiary); }
+
+        .roster-filters { display: flex; gap: var(--sp-6); flex-wrap: wrap; }
+        .filter-chip {
+            padding: 6px 14px; background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 100px; font-size: var(--fs-sm); font-weight: 500;
+            color: var(--text-secondary); cursor: pointer; transition: all 0.2s var(--ease-out);
+            font-family: inherit;
+        }
+        .filter-chip:hover { border-color: var(--text-secondary); }
+        .filter-chip.active { background: var(--btn-bg); color: var(--btn-text); border-color: var(--btn-bg); }
+
+        .roster-table-wrap {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--r-xl); overflow: hidden;
+        }
+        .roster-table { width: 100%; border-collapse: collapse; }
+        .roster-table th {
+            padding: 12px 16px; text-align: left;
+            font-size: var(--fs-xs); font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--text-tertiary);
+            border-bottom: 1px solid var(--border); cursor: pointer;
+            user-select: none; transition: color 0.15s;
+        }
+        .roster-table th:hover { color: var(--text-secondary); }
+        .roster-table th.sorted { color: var(--text); }
+        .roster-table th .sort-arrow { display: inline-block; margin-left: 4px; font-size: 10px; }
+        .roster-table td {
+            padding: 14px 16px; border-bottom: 1px solid var(--border);
+            font-size: var(--fs-base); vertical-align: middle;
+        }
+        .roster-table tr { cursor: pointer; transition: background 0.15s var(--ease-out); }
+        .roster-table tbody tr:hover { background: var(--badge-bg); }
+        .roster-table tbody tr:last-child td { border-bottom: none; }
+
+        .student-cell { display: flex; align-items: center; gap: var(--sp-10); }
+        .student-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--badge-bg); display: flex; align-items: center; justify-content: center;
+            font-size: var(--fs-xs); font-weight: 600; color: var(--text-secondary); flex-shrink: 0;
+        }
+        .student-name-text { font-weight: 500; }
+
+        .score-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 4px 10px; border-radius: var(--r-sm);
+            font-size: var(--fs-sm); font-weight: 700;
+            font-family: 'SF Mono', SFMono-Regular, Consolas, monospace;
+        }
+        .score-badge.red { background: rgba(239,68,68,0.12); color: #ef4444; }
+        .score-badge.yellow { background: rgba(245,158,11,0.12); color: #f59e0b; }
+        .score-badge.blue { background: rgba(59,130,246,0.12); color: #3b82f6; }
+        .score-badge.green { background: rgba(34,197,94,0.12); color: #22c55e; }
+
+        .trend-indicator { font-size: var(--fs-sm); font-weight: 600; }
+        .trend-indicator.up { color: #22c55e; }
+        .trend-indicator.down { color: #ef4444; }
+        .trend-indicator.stable { color: var(--text-tertiary); }
+
+        .gap-text { font-size: var(--fs-sm); color: var(--text-secondary); max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .mismatch-flag {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 2px 8px; border-radius: 100px;
+            font-size: var(--fs-xs); font-weight: 600;
+            background: rgba(245,158,11,0.12); color: #f59e0b;
+        }
+        .last-active { font-size: var(--fs-sm); color: var(--text-tertiary); }
+
+        /* Roster count footer */
+        .roster-footer {
+            padding: 12px 16px; border-top: 1px solid var(--border);
+            font-size: var(--fs-sm); color: var(--text-tertiary);
+            display: flex; justify-content: space-between;
+        }
+
+        /* ===== INDIVIDUAL STUDENT VIEW ===== */
+        .student-view-header {
+            display: flex; justify-content: space-between; align-items: flex-start;
+        }
+        .student-view-back {
+            display: flex; align-items: center; gap: var(--sp-8);
+            font-size: var(--fs-base); color: var(--text-secondary);
+            cursor: pointer; margin-bottom: var(--sp-12); transition: all 0.2s var(--ease-out);
+        }
+        .student-view-back:hover { color: var(--text); transform: translateX(-3px); }
+        .student-view-back svg { width: 16px; height: 16px; }
+        .student-profile { display: flex; align-items: center; gap: var(--sp-16); }
+        .student-lg-avatar {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: var(--badge-bg); display: flex; align-items: center; justify-content: center;
+            font-size: var(--fs-xl); font-weight: 600; color: var(--text-secondary);
+        }
+        .student-lg-name { font-size: var(--fs-2xl); font-weight: 700; letter-spacing: -0.02em; }
+        .student-lg-meta { font-size: var(--fs-sm); color: var(--text-secondary); margin-top: 2px; }
+
+        /* Score comparison card */
+        .score-compare {
+            display: flex; gap: var(--sp-24); align-items: flex-end; text-align: right;
+        }
+        .score-main { }
+        .score-main-value {
+            font-size: var(--fs-hero); font-weight: 800; letter-spacing: -0.03em;
+            font-family: 'SF Mono', SFMono-Regular, Consolas, monospace;
+            line-height: 1;
+        }
+        .score-main-label { font-size: var(--fs-sm); color: var(--text-tertiary); }
+        .score-canvas { }
+        .score-canvas-value {
+            font-size: var(--fs-2xl); font-weight: 700; letter-spacing: -0.02em;
+            color: var(--text-secondary); line-height: 1;
+        }
+        .score-canvas-label { font-size: var(--fs-xs); color: var(--text-tertiary); }
+        .score-gap-indicator {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 10px; border-radius: 100px;
+            font-size: var(--fs-xs); font-weight: 600;
+            margin-top: var(--sp-6);
+        }
+        .score-gap-indicator.warning { background: rgba(245,158,11,0.12); color: #f59e0b; }
+        .score-gap-indicator.danger { background: rgba(239,68,68,0.12); color: #ef4444; }
+        .score-gap-indicator.aligned { background: rgba(34,197,94,0.12); color: #22c55e; }
+
+        .student-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--sp-12); }
+
+        /* Timeline Chart */
+        .timeline-card, .session-card, .radar-card, .aha-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--r-xl); padding: var(--sp-24);
+        }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--sp-16); }
+        .card-title { font-size: var(--fs-md); font-weight: 600; }
+        .timeline-chart { height: 200px; position: relative; }
+        .timeline-svg { width: 100%; height: 100%; }
+        .timeline-line { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        .timeline-line.latent { stroke: var(--accent); }
+        .timeline-line.canvas { stroke: var(--text-tertiary); stroke-dasharray: 5 5; stroke-width: 1.5; }
+        .timeline-dot { fill: var(--btn-bg); stroke: var(--bg-card); stroke-width: 2; cursor: pointer; transition: r 0.2s; }
+        .timeline-dot:hover { r: 6; }
+        .timeline-grid-line { stroke: var(--border); stroke-width: 1; }
+
+        /* Topic Breakdown */
+        .radar-list { display: flex; flex-direction: column; gap: var(--sp-8); }
+        .radar-item { display: flex; align-items: center; gap: var(--sp-12); }
+        .radar-label { flex: 1; font-size: var(--fs-base); font-weight: 500; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .radar-bar-bg { width: 120px; height: 8px; background: var(--badge-bg); border-radius: 4px; overflow: hidden; }
+        .radar-bar-fill { height: 100%; border-radius: 4px; transition: width 0.8s var(--ease-out); }
+        .radar-score { font-size: var(--fs-sm); font-weight: 700; min-width: 36px; text-align: right;
+            font-family: 'SF Mono', SFMono-Regular, Consolas, monospace; }
+
+        /* Session History */
+        .session-item {
+            display: flex; align-items: flex-start; gap: var(--sp-12);
+            padding: 14px var(--sp-12); background: var(--bg);
+            border-radius: var(--r-md); margin-bottom: var(--sp-8);
+            transition: all 0.15s var(--ease-out);
+        }
+        .session-item:hover { transform: translateX(2px); }
+        .session-icon {
+            width: 36px; height: 36px; border-radius: var(--r-md);
+            background: var(--bg-card); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .session-icon svg { width: 16px; height: 16px; color: var(--text-secondary); }
+        .session-info { flex: 1; }
+        .session-topic-name { font-size: var(--fs-base); font-weight: 500; margin-bottom: 2px; }
+        .session-meta { font-size: var(--fs-sm); color: var(--text-tertiary); }
+        .session-change { font-size: var(--fs-sm); font-weight: 600;
+            font-family: 'SF Mono', SFMono-Regular, Consolas, monospace; }
+        .session-change.up { color: #22c55e; }
+        .session-change.down { color: #ef4444; }
+
+        /* Aha Moments */
+        .aha-title { display: flex; align-items: center; gap: var(--sp-8); margin-bottom: var(--sp-16); }
+        .aha-item {
+            padding: 14px var(--sp-16); background: var(--bg);
+            border-radius: var(--r-md); margin-bottom: var(--sp-8);
+            border-left: 3px solid #22c55e; font-size: var(--fs-sm);
+            line-height: 1.6; color: var(--text-secondary);
+        }
+        .aha-item .aha-time { font-size: var(--fs-xs); font-weight: 600; color: var(--text-tertiary); margin-bottom: 4px; }
+
+        /* Action Buttons */
+        .action-row { display: flex; gap: var(--sp-10); flex-wrap: wrap; }
+        .action-btn {
+            padding: 10px 20px; border-radius: var(--r-md);
+            font-size: var(--fs-sm); font-weight: 600; cursor: pointer;
+            display: flex; align-items: center; gap: var(--sp-8);
+            transition: all 0.2s var(--ease-out); font-family: inherit;
+        }
+        .action-btn svg { width: 16px; height: 16px; }
+        .action-btn.primary { background: var(--btn-bg); color: var(--btn-text); border: none; }
+        .action-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
+        .action-btn.secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+        .action-btn.secondary:hover { background: var(--badge-bg); }
+
+        /* Color helpers */
+        .bg-red { background: #ef4444; } .bg-yellow { background: #f59e0b; }
+        .bg-blue { background: #3b82f6; } .bg-green { background: #22c55e; }
+
+        /* ===== INSIGHTS PLACEHOLDER ===== */
+        .insights-placeholder {
+            text-align: center; padding: 80px 20px;
+        }
+        .insights-placeholder .icon-wrap {
+            width: 64px; height: 64px; margin: 0 auto var(--sp-20);
+            background: var(--badge-bg); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .insights-placeholder .icon-wrap svg { width: 28px; height: 28px; color: var(--text-tertiary); }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .two-col { grid-template-columns: 1fr; }
+            .stat-row { grid-template-columns: repeat(2, 1fr); }
+            .student-stats { grid-template-columns: repeat(2, 1fr); }
+            .gauge-card { flex-direction: column; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; left: 0; top: 0; height: 100vh; z-index: 100; box-shadow: 8px 0 32px var(--shadow); }
+            .sidebar.collapsed { transform: translateX(-100%); }
+            .stat-row { grid-template-columns: 1fr 1fr; }
+            .roster-controls { flex-direction: column; align-items: stretch; }
+            .roster-search { min-width: unset; }
+            .student-view-header { flex-direction: column; gap: var(--sp-16); }
+            .score-compare { align-items: flex-start; }
+        }
     </style>
 </head>
-<body data-theme="deep">
-    <div class="professor-layout">
-        <aside class="prof-sidebar">
-            <div class="prof-sidebar-logo">LATENT</div>
-            <nav class="prof-sidebar-nav">
-                <div class="prof-nav-label">Course</div>
-                <div class="prof-course-list" id="course-list"></div>
-                <div class="prof-nav-label" style="margin-top: var(--sp-20);">Navigation</div>
-                <div class="prof-nav-item active" data-screen="overview">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                    Overview
+<body>
+<div class="app-shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <span class="sidebar-logo">LATENT</span>
+                <span class="sidebar-badge">Professor</span>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Overview</div>
+            <div class="sidebar-item active" onclick="showView('overview')" data-nav="overview">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <span>Dashboard</span>
+                <span class="kbd">1</span>
+            </div>
+            <div class="sidebar-item" onclick="showView('roster')" data-nav="roster">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Student Roster</span>
+                <span class="item-count" id="roster-count">25</span>
+            </div>
+            <div class="sidebar-item" onclick="showView('insights')" data-nav="insights">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                <span>Insights</span>
+                <span class="kbd">3</span>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Courses</div>
+        </div>
+        <div class="sidebar-courses" id="sidebar-courses"></div>
+
+        <div class="sidebar-footer">
+            <div class="prof-avatar">DR</div>
+            <div class="prof-info">
+                <div class="prof-name">Dr. Richardson</div>
+                <div class="prof-role">Political Philosophy</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-area">
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
+                <div>
+                    <div class="top-bar-title" id="top-title">Course Overview</div>
+                    <div class="top-bar-sub" id="top-sub">POL 201 — Political Philosophy · Spring 2026</div>
                 </div>
-                <div class="prof-nav-item" data-screen="roster">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-                    Student Roster
-                </div>
-                <div class="prof-nav-item" data-screen="insights">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
-                    Insights
-                </div>
-            </nav>
-        </aside>
-        <main class="prof-main">
-            <header class="prof-topbar">
-                <div class="prof-topbar-left">
-                    <div>
-                        <div class="prof-course-title" id="topbar-course-name">POL 241 — Political Theory</div>
-                        <div class="prof-course-meta" id="topbar-course-meta">Spring 2026 · 28 students</div>
+            </div>
+            <div class="top-bar-right">
+                <div style="position:relative">
+                    <button class="top-btn" onclick="toggleThemeDropdown()" title="Change theme">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    </button>
+                    <div class="theme-dropdown" id="theme-dropdown">
+                        <div class="theme-grid">
+                            <div class="theme-opt" onclick="setTheme('clear')" data-theme="clear"><div class="theme-swatch" style="background:#f5f5f7;border:1px solid rgba(0,0,0,0.1)"></div><span>Clear</span></div>
+                            <div class="theme-opt active" onclick="setTheme('deep')" data-theme="deep"><div class="theme-swatch" style="background:#0a0a0a;border:1px solid rgba(255,255,255,0.1)"></div><span>Deep</span></div>
+                            <div class="theme-opt" onclick="setTheme('emerge')" data-theme="emerge"><div class="theme-swatch" style="background:linear-gradient(145deg,#1a1215,#2d1f24);border:1px solid rgba(232,121,149,0.2)"></div><span>Emerge</span></div>
+                            <div class="theme-opt" onclick="setTheme('grow')" data-theme="grow"><div class="theme-swatch" style="background:linear-gradient(145deg,#0d1a12,#152417);border:1px solid rgba(76,175,80,0.2)"></div><span>Grow</span></div>
+                        </div>
                     </div>
                 </div>
-                <div class="prof-topbar-right">
-                    <select class="prof-theme-select" id="theme-select" aria-label="Theme">
-                        <option value="deep">Deep</option>
-                        <option value="clear">Clear</option>
-                        <option value="emerge">Emerge</option>
-                        <option value="grow">Grow</option>
-                    </select>
-                    <div class="prof-avatar" id="prof-avatar">JD</div>
-                </div>
-            </header>
-            <div class="prof-content">
-                <!-- Screen 1: Course Overview -->
-                <section class="prof-screen active" id="screen-overview">
-                    <div class="overview-header">
-                        <h1>Course Overview</h1>
-                        <p>At-a-glance health of your class</p>
-                    </div>
-                    <div class="overview-grid">
-                        <div class="overview-card">
-                            <div class="overview-card-title">Class Understanding Meter</div>
-                            <div class="class-meter-wrap">
-                                <div class="class-meter-circle blue" id="class-meter-circle">72</div>
-                                <div class="class-meter-info">
-                                    <div>Class average LATENT Score</div>
-                                    <div class="class-meter-trend up" id="class-meter-trend">↑ 4 points from last week</div>
+                <button class="top-btn" title="Notifications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- ===== COURSE OVERVIEW ===== -->
+            <div class="view active" id="view-overview">
+                <div class="stat-row" id="stat-row"></div>
+
+                <div class="two-col anim-card">
+                    <div style="display:flex;flex-direction:column;gap:var(--sp-16)">
+                        <div class="gauge-card">
+                            <div style="text-align:center">
+                                <div class="gauge-wrap">
+                                    <svg class="gauge-svg" viewBox="0 0 120 120">
+                                        <circle class="gauge-bg" cx="60" cy="60" r="52"/>
+                                        <circle class="gauge-fill" id="gauge-fill" cx="60" cy="60" r="52"
+                                            stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+                                    </svg>
+                                    <div class="gauge-value" id="gauge-value">0</div>
+                                </div>
+                                <div class="gauge-title">Class Average</div>
+                                <div class="gauge-trend up" id="gauge-trend">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+                                    <span id="gauge-trend-text">+4 pts this week</span>
+                                </div>
+                            </div>
+                            <div style="flex:1;min-width:0">
+                                <div class="distrib-title" style="margin-bottom:var(--sp-12)">Understanding Distribution</div>
+                                <div class="distrib-bar-wrap" id="distrib-bars"></div>
+                                <div class="distrib-labels"><span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span></div>
+                                <div class="distrib-legend">
+                                    <div class="legend-item"><div class="legend-dot bg-red"></div>Critical (0-40)</div>
+                                    <div class="legend-item"><div class="legend-dot bg-yellow"></div>Warning (41-60)</div>
+                                    <div class="legend-item"><div class="legend-dot bg-blue"></div>Good (61-80)</div>
+                                    <div class="legend-item"><div class="legend-dot bg-green"></div>Strong (81-100)</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="overview-card">
-                            <div class="overview-card-title">Understanding Distribution</div>
-                            <div class="dist-bars" id="dist-bars"></div>
-                        </div>
-                        <div class="overview-card">
-                            <div class="overview-card-title">Topic Health Map</div>
-                            <div class="topic-health-list" id="topic-health-list"></div>
-                        </div>
-                        <div class="overview-card">
-                            <div class="overview-card-title">Needs Attention</div>
-                            <div class="attention-list" id="attention-list"></div>
-                        </div>
-                        <div class="overview-card" style="grid-column: 1 / -1;">
-                            <div class="overview-card-title">Recent Activity</div>
-                            <div class="activity-list" id="activity-list"></div>
+
+                        <div class="topic-card">
+                            <div class="topic-header">
+                                <span class="topic-title">Topic Health Map</span>
+                                <span style="font-size:var(--fs-xs);color:var(--text-tertiary)">7 topics covered</span>
+                            </div>
+                            <div id="topic-list"></div>
                         </div>
                     </div>
-                </section>
-                <!-- Screen 2: Student Roster -->
-                <section class="prof-screen" id="screen-roster">
-                    <div class="overview-header">
-                        <h1>Student Roster</h1>
-                        <p>LATENT Score, trend, and gaps for every student</p>
-                    </div>
-                    <div class="roster-toolbar">
-                        <select id="filter-score" aria-label="Score range">
-                            <option value="">All scores</option>
-                            <option value="below50">Below 50</option>
-                            <option value="50-60">50–60</option>
-                            <option value="60-80">60–80</option>
-                            <option value="above80">Above 80</option>
-                        </select>
-                        <select id="filter-trend" aria-label="Trend">
-                            <option value="">All trends</option>
-                            <option value="down">Declining</option>
-                            <option value="stable">Stable</option>
-                            <option value="up">Rising</option>
-                        </select>
-                        <select id="filter-topic" aria-label="Topic">
-                            <option value="">All topics</option>
-                        </select>
-                        <input type="text" id="filter-search" placeholder="Search students..." style="min-width: 180px;">
-                    </div>
-                    <div class="roster-table-wrap">
-                        <table class="roster-table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>LATENT Score</th>
-                                    <th>Trend</th>
-                                    <th>Sessions (wk)</th>
-                                    <th>Last Active</th>
-                                    <th>Canvas Grade</th>
-                                    <th>Gap</th>
-                                </tr>
-                            </thead>
-                            <tbody id="roster-tbody"></tbody>
-                        </table>
-                    </div>
-                </section>
-                <!-- Screen 3: Individual Student -->
-                <section class="prof-screen" id="screen-student">
-                    <button type="button" class="student-detail-back" id="student-detail-back">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-                        Back to Roster
-                    </button>
-                    <div class="student-header" id="student-header"></div>
-                    <div class="student-section">
-                        <div class="student-section-title">Understanding Over Time</div>
-                        <div class="timeline-chart" id="timeline-chart"></div>
-                    </div>
-                    <div class="student-section">
-                        <div class="student-section-title">Topic Breakdown</div>
-                        <div class="topic-radar-wrap" id="topic-radar"></div>
-                    </div>
-                    <div class="student-section">
-                        <div class="student-section-title">Session History & Aha Moments</div>
-                        <div class="session-list" id="session-list"></div>
-                    </div>
-                    <div class="student-section">
-                        <div class="student-section-title">Recommended Actions</div>
-                        <div class="recommended-actions">
-                            <button type="button" class="btn-action">Send study recommendation</button>
-                            <button type="button" class="btn-action secondary">Create targeted assignment</button>
+
+                    <div style="display:flex;flex-direction:column;gap:var(--sp-16)">
+                        <div class="attention-card">
+                            <div class="attention-header">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                <span class="attention-title">Needs Attention</span>
+                                <span class="attention-count" id="attn-count">0</span>
+                            </div>
+                            <div id="attention-list"></div>
+                        </div>
+
+                        <div class="feed-card">
+                            <div class="feed-title">Recent Activity</div>
+                            <div id="feed-list"></div>
                         </div>
                     </div>
-                </section>
-                <!-- Screen 4: Insights placeholder -->
-                <section class="prof-screen" id="screen-insights">
-                    <div class="overview-header">
-                        <h1>Insights & Analytics</h1>
-                        <p>Understanding over time, top misconceptions, at-risk report</p>
-                    </div>
-                    <div class="overview-card" style="max-width: 560px;">
-                        <div class="overview-card-title">Coming in Phase 3</div>
-                        <p style="color: var(--text-secondary); font-size: var(--fs-base);">Top Misconceptions, Understanding Over Time chart, At-Risk identification, and Canvas grade vs LATENT score mismatch flagging will appear here.</p>
-                    </div>
-                </section>
+                </div>
             </div>
-        </main>
+
+            <!-- ===== STUDENT ROSTER ===== -->
+            <div class="view" id="view-roster">
+                <div class="roster-controls anim-card">
+                    <div class="roster-search">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input type="text" placeholder="Search students..." id="roster-search-input" oninput="filterRoster()">
+                    </div>
+                    <div class="roster-filters">
+                        <button class="filter-chip active" onclick="setFilter('all', this)">All</button>
+                        <button class="filter-chip" onclick="setFilter('critical', this)">Critical (&lt;40)</button>
+                        <button class="filter-chip" onclick="setFilter('warning', this)">Warning (40-60)</button>
+                        <button class="filter-chip" onclick="setFilter('declining', this)">Declining</button>
+                        <button class="filter-chip" onclick="setFilter('mismatch', this)">Mismatch ⚠</button>
+                        <button class="filter-chip" onclick="setFilter('inactive', this)">Inactive 7d+</button>
+                    </div>
+                </div>
+                <div class="roster-table-wrap anim-card">
+                    <table class="roster-table">
+                        <thead>
+                            <tr>
+                                <th onclick="sortRoster('name')" class="sorted">Name <span class="sort-arrow">↑</span></th>
+                                <th onclick="sortRoster('score')">LATENT Score</th>
+                                <th onclick="sortRoster('trend')">Trend</th>
+                                <th onclick="sortRoster('sessions')">Sessions</th>
+                                <th onclick="sortRoster('lastActive')">Last Active</th>
+                                <th onclick="sortRoster('grade')">Canvas Grade</th>
+                                <th onclick="sortRoster('gap')">Gap</th>
+                            </tr>
+                        </thead>
+                        <tbody id="roster-body"></tbody>
+                    </table>
+                    <div class="roster-footer" id="roster-footer"></div>
+                </div>
+            </div>
+
+            <!-- ===== INDIVIDUAL STUDENT ===== -->
+            <div class="view" id="view-student">
+                <div class="student-view-header anim-card">
+                    <div>
+                        <div class="student-view-back" onclick="showView('roster')">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                            Back to Roster
+                        </div>
+                        <div class="student-profile">
+                            <div class="student-lg-avatar" id="sv-avatar">SM</div>
+                            <div>
+                                <div class="student-lg-name" id="sv-name">Student Name</div>
+                                <div class="student-lg-meta" id="sv-meta"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="score-compare">
+                        <div class="score-canvas">
+                            <div class="score-canvas-value" id="sv-canvas-grade">B+</div>
+                            <div class="score-canvas-label">Canvas Grade</div>
+                        </div>
+                        <div class="score-main">
+                            <div class="score-main-value" id="sv-score">38</div>
+                            <div class="score-main-label">LATENT Score</div>
+                            <div class="score-gap-indicator" id="sv-gap-badge"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="student-stats anim-card" id="sv-stats"></div>
+
+                <div class="action-row anim-card">
+                    <button class="action-btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Send Study Recommendation</button>
+                    <button class="action-btn secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Create Targeted Assignment</button>
+                </div>
+
+                <div class="two-col">
+                    <div style="display:flex;flex-direction:column;gap:var(--sp-16)">
+                        <div class="timeline-card anim-card">
+                            <div class="card-header">
+                                <span class="card-title">Understanding Timeline</span>
+                                <div style="display:flex;gap:var(--sp-12);align-items:center">
+                                    <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>LATENT Score</div>
+                                    <div class="legend-item"><div class="legend-dot" style="background:var(--text-tertiary)"></div>Canvas Grade</div>
+                                </div>
+                            </div>
+                            <div class="timeline-chart">
+                                <svg class="timeline-svg" id="sv-timeline" viewBox="0 0 600 180" preserveAspectRatio="none"></svg>
+                            </div>
+                        </div>
+
+                        <div class="session-card anim-card">
+                            <div class="card-title" style="margin-bottom:var(--sp-16)">Session History</div>
+                            <div id="sv-sessions"></div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;flex-direction:column;gap:var(--sp-16)">
+                        <div class="radar-card anim-card">
+                            <div class="card-title" style="margin-bottom:var(--sp-16)">Topic Breakdown</div>
+                            <div id="sv-topics" class="radar-list"></div>
+                        </div>
+
+                        <div class="aha-card anim-card">
+                            <div class="card-title aha-title">✦ Aha Moments</div>
+                            <div id="sv-aha"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== INSIGHTS ===== -->
+            <div class="view" id="view-insights">
+                <div class="insights-placeholder anim-card">
+                    <div class="icon-wrap">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                    </div>
+                    <div style="font-size:var(--fs-3xl);font-weight:700;margin-bottom:var(--sp-12)">Insights & Analytics</div>
+                    <div style="font-size:var(--fs-lg);color:var(--text-secondary);max-width:440px;margin:0 auto;line-height:1.6">
+                        Top misconceptions, understanding over time, at-risk reports, and engagement patterns — coming in Phase 3.
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <script>
-        (function() {
-            const MOCK_COURSES = [
-                { id: 'pol241', name: 'Political Theory', code: 'POL 241', semester: 'Spring 2026', studentCount: 28 },
-                { id: 'arc418', name: 'Latin American Architecture', code: 'ARC 418', semester: 'Spring 2026', studentCount: 22 }
-            ];
-            const MOCK_TOPICS = [
-                { name: 'Social Contract Theory', week: 1, classAvg: 78 },
-                { name: "Plato's Republic", week: 2, classAvg: 71 },
-                { name: 'Hobbes & Locke', week: 3, classAvg: 52 },
-                { name: 'Rousseau', week: 4, classAvg: 41 }
-            ];
-            const MOCK_STUDENTS = [
-                { id: 's1', name: 'Sarah Martinez', score: 38, trend: 'down', sessionsThisWeek: 0, lastActive: '3 days ago', canvasGrade: 'B-', gap: 'Hobbes vs Locke', mismatch: false },
-                { id: 's2', name: 'James Kim', score: 82, trend: 'up', sessionsThisWeek: 4, lastActive: 'Today', canvasGrade: 'A-', gap: 'None', mismatch: false },
-                { id: 's3', name: 'Aisha Rahman', score: 56, trend: 'stable', sessionsThisWeek: 2, lastActive: 'Yesterday', canvasGrade: 'C+', gap: 'Rousseau', mismatch: false },
-                { id: 's4', name: 'Marcus Webb', score: 91, trend: 'up', sessionsThisWeek: 5, lastActive: 'Today', canvasGrade: 'A', gap: 'None', mismatch: false },
-                { id: 's5', name: 'Elena Vasquez', score: 44, trend: 'down', sessionsThisWeek: 1, lastActive: '5 days ago', canvasGrade: 'A-', gap: 'Locke property rights', mismatch: true },
-                { id: 's6', name: 'David Park', score: 67, trend: 'up', sessionsThisWeek: 3, lastActive: 'Today', canvasGrade: 'B+', gap: 'None', mismatch: false },
-                { id: 's7', name: 'Jordan Taylor', score: 29, trend: 'down', sessionsThisWeek: 0, lastActive: '1 week ago', canvasGrade: 'C', gap: 'Social contract basics', mismatch: false }
-            ];
-            const MOCK_DISTRIBUTION = [
-                { label: '80–100', count: 12, color: '#22c55e' },
-                { label: '60–80', count: 8, color: '#3b82f6' },
-                { label: '40–60', count: 5, color: '#eab308' },
-                { label: '0–40', count: 3, color: '#ef4444' }
-            ];
-            const MOCK_ATTENTION = [
-                { name: 'Sarah Martinez', score: 38, trend: 'down', gap: 'Cannot connect Locke to modern property rights', critical: true },
-                { name: 'Elena Vasquez', score: 44, trend: 'down', gap: 'High Canvas grade, low understanding — surface learner', critical: false },
-                { name: 'Jordan Taylor', score: 29, trend: 'down', gap: 'Struggling with social contract basics', critical: true }
-            ];
-            const MOCK_ACTIVITY = [
-                '15 students completed Deep Dive sessions this week',
-                '3 students hit "I Don\'t Know" on Rousseau\'s General Will',
-                'Class engagement up 12% since Tuesday'
-            ];
-            const MOCK_STUDENT_DETAIL = {
-                s1: {
-                    timeline: [32, 35, 38, 36, 38],
-                    topicScores: [{ name: 'Social Contract', pct: 45 }, { name: "Plato's Republic", pct: 52 }, { name: 'Hobbes & Locke', pct: 28 }, { name: 'Rousseau', pct: 31 }],
-                    sessions: [
-                        { when: 'Feb 5, 2:30 PM', topic: 'Hobbes & Locke', duration: '12 min', aha: 'At 2:38pm, Sarah connected Locke\'s labor theory to modern IP — then admitted she still confuses state of nature with both thinkers.' },
-                        { when: 'Feb 2, 11:00 AM', topic: "Plato's Republic", duration: '8 min', aha: null }
-                    ]
-                },
-                s2: {
-                    timeline: [72, 75, 78, 80, 82],
-                    topicScores: [{ name: 'Social Contract', pct: 88 }, { name: "Plato's Republic", pct: 85 }, { name: 'Hobbes & Locke', pct: 82 }, { name: 'Rousseau', pct: 78 }],
-                    sessions: [
-                        { when: 'Feb 6, 4:15 PM', topic: 'Rousseau', duration: '15 min', aha: 'At 4:22pm, James correctly derived the difference between positive and negative liberty without prompting.' }
-                    ]
-                }
-            };
-            function getStudentDetail(id) {
-                return MOCK_STUDENT_DETAIL[id] || MOCK_STUDENT_DETAIL.s1;
-            }
+</div>
 
-            let currentCourseId = MOCK_COURSES[0].id;
-            let currentCourse = () => MOCK_COURSES.find(c => c.id === currentCourseId) || MOCK_COURSES[0];
-            let rosterFiltered = [...MOCK_STUDENTS];
+<script>
+// ===== DATA =====
+const courseData = {
+    id: 'pol201', code: 'POL 201', name: 'Political Philosophy',
+    semester: 'Spring 2026', avgScore: 62, scoreTrend: +4,
+    totalStudents: 25, activeThisWeek: 19, avgSessions: 2.4, deepDiveTotal: 312,
+};
 
-            function scoreClass(score) {
-                if (score >= 81) return 'hi';
-                if (score >= 61) return 'mid';
-                if (score >= 41) return 'mid';
-                return 'lo';
-            }
-            function meterColor(score) {
-                if (score >= 81) return 'green';
-                if (score >= 61) return 'blue';
-                if (score >= 41) return 'yellow';
-                return 'red';
-            }
+const topics = [
+    { week: 'Week 1', name: 'Social Contract Theory', score: 78, status: '✓' },
+    { week: 'Week 2', name: "Plato's Republic", score: 71, status: '✓' },
+    { week: 'Week 3', name: 'Hobbes & Locke', score: 52, status: '⚠️' },
+    { week: 'Week 4', name: 'Rousseau', score: 41, status: '🔴' },
+    { week: 'Week 5', name: 'Utilitarianism', score: 68, status: '✓' },
+    { week: 'Week 6', name: 'Kantian Ethics', score: 45, status: '🔴' },
+    { week: 'Week 7', name: 'Rawls & Justice', score: 73, status: '✓' },
+];
 
-            function renderCourseList() {
-                const el = document.getElementById('course-list');
-                el.innerHTML = MOCK_COURSES.map(c => `
-                    <div class="prof-course-chip ${c.id === currentCourseId ? 'active' : ''}" data-course="${c.id}">
-                        ${c.code}<br><span class="code">${c.name}</span>
-                    </div>
-                `).join('');
-                el.querySelectorAll('.prof-course-chip').forEach(chip => {
-                    chip.addEventListener('click', () => {
-                        currentCourseId = chip.dataset.course;
-                        renderCourseList();
-                        updateTopbar();
-                        renderOverview();
-                        renderRoster();
-                    });
-                });
-            }
-            function updateTopbar() {
-                const c = currentCourse();
-                document.getElementById('topbar-course-name').textContent = `${c.code} — ${c.name}`;
-                document.getElementById('topbar-course-meta').textContent = `${c.semester} · ${c.studentCount} students`;
-            }
-            function renderOverview() {
-                const avg = 72;
-                const circle = document.getElementById('class-meter-circle');
-                circle.textContent = avg;
-                circle.className = 'class-meter-circle ' + meterColor(avg);
-                document.getElementById('class-meter-trend').textContent = '↑ 4 points from last week';
-                document.getElementById('dist-bars').innerHTML = MOCK_DISTRIBUTION.map(d => {
-                    const pct = (d.count / 28) * 100;
-                    return `<div class="dist-row"><span class="dist-label">${d.label}</span><div class="dist-bar-wrap"><div class="dist-bar" style="width:${pct}%;background:${d.color}"></div></div><span class="dist-count">${d.count}</span></div>`;
-                }).join('');
-                document.getElementById('topic-health-list').innerHTML = MOCK_TOPICS.map(t => {
-                    const pctClass = t.classAvg >= 61 ? 'hi' : t.classAvg >= 41 ? 'mid' : 'lo';
-                    return `<div class="topic-health-item"><span class="name">Week ${t.week}: ${t.name}</span><span class="pct ${pctClass}">${t.classAvg}%</span></div>`;
-                }).join('');
-                document.getElementById('attention-list').innerHTML = MOCK_ATTENTION.map(a => `
-                    <div class="attention-item ${a.critical ? 'critical' : ''}" data-student-id="${MOCK_STUDENTS.find(s => s.name === a.name)?.id || 's1'}">
-                        <div class="name">${a.name}</div>
-                        <div class="gap">${a.gap}</div>
-                        <div class="score">${a.score} ${a.trend === 'down' ? '↓' : ''}</div>
-                        <button type="button" class="btn-send-rec">Send study recommendation</button>
-                    </div>
-                `).join('');
-                document.getElementById('attention-list').querySelectorAll('.attention-item').forEach(item => {
-                    item.addEventListener('click', function(e) {
-                        if (e.target.classList.contains('btn-send-rec')) return;
-                        openStudent(item.dataset.studentId);
-                    });
-                });
-                document.getElementById('activity-list').innerHTML = MOCK_ACTIVITY.map(a => `<div class="activity-item">${a}</div>`).join('');
-            }
-            function renderRoster() {
-                const tbody = document.getElementById('roster-tbody');
-                const scoreFilter = document.getElementById('filter-score').value;
-                const trendFilter = document.getElementById('filter-trend').value;
-                const topicFilter = (document.getElementById('filter-topic').value || '').toLowerCase();
-                const search = (document.getElementById('filter-search').value || '').toLowerCase();
-                let list = MOCK_STUDENTS.filter(s => {
-                    if (scoreFilter === 'below50' && s.score >= 50) return false;
-                    if (scoreFilter === '50-60' && (s.score < 50 || s.score > 60)) return false;
-                    if (scoreFilter === '60-80' && (s.score < 60 || s.score > 80)) return false;
-                    if (scoreFilter === 'above80' && s.score <= 80) return false;
-                    if (trendFilter && s.trend !== trendFilter) return false;
-                    if (topicFilter && !(s.gap || '').toLowerCase().includes(topicFilter)) return false;
-                    if (search && !s.name.toLowerCase().includes(search)) return false;
-                    return true;
-                });
-                tbody.innerHTML = list.map(s => {
-                    const scoreCl = scoreClass(s.score);
-                    const trendSym = s.trend === 'up' ? '↑' : s.trend === 'down' ? '↓' : '→';
-                    const trendCl = s.trend === 'up' ? 'trend-up' : s.trend === 'down' ? 'trend-down' : 'trend-stable';
-                    return `<tr class="clickable" data-student-id="${s.id}">
-                        <td>${s.name}${s.mismatch ? '<span class="mismatch-badge">Mismatch</span>' : ''}</td>
-                        <td class="score-cell ${scoreCl}">${s.score}</td>
-                        <td class="${trendCl}">${trendSym}</td>
-                        <td>${s.sessionsThisWeek}</td>
-                        <td>${s.lastActive}</td>
-                        <td>${s.canvasGrade}</td>
-                        <td>${s.gap}</td>
-                    </tr>`;
-                }).join('');
-                tbody.querySelectorAll('tr.clickable').forEach(tr => {
-                    tr.addEventListener('click', () => openStudent(tr.dataset.studentId));
-                });
-            }
-            function openStudent(id) {
-                document.querySelectorAll('.prof-screen').forEach(s => s.classList.remove('active'));
-                document.getElementById('screen-student').classList.add('active');
-                document.querySelectorAll('.prof-nav-item').forEach(n => n.classList.remove('active'));
-                const student = MOCK_STUDENTS.find(s => s.id === id) || MOCK_STUDENTS[0];
-                const detail = getStudentDetail(id);
-                document.getElementById('student-header').innerHTML = `
-                    <div class="student-avatar-lg">${student.name.split(' ').map(n => n[0]).join('').slice(0,2)}</div>
-                    <div class="student-header-info">
-                        <div class="student-header-name">${student.name}</div>
-                        <div class="student-header-meta">Member since Jan 15, 2026 · ${detail.sessions.length} Deep Dive sessions</div>
-                        <div class="student-header-score ${meterColor(student.score)}">LATENT ${student.score}</div>
-                        <div style="font-size: var(--fs-sm); color: var(--text-tertiary); margin-top: 4px;">Canvas ${student.canvasGrade}</div>
-                    </div>
-                `;
-                const maxT = Math.max(...detail.timeline);
-                document.getElementById('timeline-chart').innerHTML = detail.timeline.map((v, i) =>
-                    `<div class="timeline-bar" style="height: ${(v / maxT) * 100}%" title="Score: ${v}"></div>`
-                ).join('');
-                document.getElementById('topic-radar').innerHTML = detail.topicScores.map(t => {
-                    const cl = t.pct >= 70 ? 'hi' : t.pct >= 50 ? 'mid' : 'lo';
-                    return `<span class="topic-chip"><span class="pct ${cl}">${t.pct}%</span> ${t.name}</span>`;
-                }).join('');
-                document.getElementById('session-list').innerHTML = detail.sessions.map(se => `
-                    <div class="session-item">
-                        <div class="when">${se.when} · ${se.duration}</div>
-                        <div class="topic">${se.topic}</div>
-                        ${se.aha ? `<div class="aha">${se.aha}</div>` : ''}
-                    </div>
-                `).join('');
-            }
-            document.getElementById('student-detail-back').addEventListener('click', () => {
-                document.querySelectorAll('.prof-screen').forEach(s => s.classList.remove('active'));
-                document.getElementById('screen-roster').classList.add('active');
-                document.querySelectorAll('.prof-nav-item').forEach(n => { n.classList.toggle('active', n.dataset.screen === 'roster'); });
-            });
-            document.querySelectorAll('.prof-nav-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const screen = this.dataset.screen;
-                    if (!screen) return;
-                    document.querySelectorAll('.prof-nav-item').forEach(n => n.classList.remove('active'));
-                    this.classList.add('active');
-                    document.querySelectorAll('.prof-screen').forEach(s => {
-                        s.classList.toggle('active', s.id === 'screen-' + screen);
-                    });
-                });
-            });
-            document.getElementById('theme-select').addEventListener('change', function() {
-                document.body.setAttribute('data-theme', this.value);
-            });
-            document.getElementById('filter-score').addEventListener('change', renderRoster);
-            document.getElementById('filter-trend').addEventListener('change', renderRoster);
-            document.getElementById('filter-search').addEventListener('input', renderRoster);
-            MOCK_TOPICS.forEach(t => {
-                const sel = document.getElementById('filter-topic');
-                const opt = document.createElement('option');
-                opt.value = t.name;
-                opt.textContent = t.name;
-                sel.appendChild(opt);
-            });
-            document.getElementById('filter-topic').addEventListener('change', renderRoster);
+const students = [
+    { id:1, name:'Sarah Martinez', initials:'SM', score:38, trend:'down', sessions:0, lastActive:'3 days ago', grade:'B-', gap:"Can't connect Locke to modern property rights", canvasGPA:3.0, daysInactive:3 },
+    { id:2, name:'James Kim', initials:'JK', score:82, trend:'up', sessions:4, lastActive:'Today', grade:'A-', gap:'None', canvasGPA:3.7, daysInactive:0 },
+    { id:3, name:'Aisha Rahman', initials:'AR', score:56, trend:'stable', sessions:2, lastActive:'Yesterday', grade:'C+', gap:"Rousseau's General Will", canvasGPA:2.3, daysInactive:1 },
+    { id:4, name:'Marcus Johnson', initials:'MJ', score:91, trend:'up', sessions:5, lastActive:'Today', grade:'A', gap:'None', canvasGPA:4.0, daysInactive:0 },
+    { id:5, name:'Elena Petrov', initials:'EP', score:44, trend:'down', sessions:1, lastActive:'5 days ago', grade:'B', gap:"Confuses Hobbes & Locke on property", canvasGPA:3.0, daysInactive:5 },
+    { id:6, name:'David Chen', initials:'DC', score:73, trend:'up', sessions:3, lastActive:'Today', grade:'B+', gap:'Kantian categorical imperative nuance', canvasGPA:3.3, daysInactive:0 },
+    { id:7, name:'Maya Williams', initials:'MW', score:29, trend:'down', sessions:0, lastActive:'8 days ago', grade:'C-', gap:"Can't articulate any social contract theory", canvasGPA:1.7, daysInactive:8 },
+    { id:8, name:"Ryan O'Brien", initials:'RO', score:67, trend:'stable', sessions:2, lastActive:'2 days ago', grade:'B', gap:'Weak on Rawls veil of ignorance', canvasGPA:3.0, daysInactive:2 },
+    { id:9, name:'Sofia Reyes', initials:'SR', score:85, trend:'up', sessions:6, lastActive:'Today', grade:'B+', gap:'None', canvasGPA:3.3, daysInactive:0 },
+    { id:10, name:'Tyler Brooks', initials:'TB', score:78, trend:'stable', sessions:3, lastActive:'Yesterday', grade:'A-', gap:'Minor gap on utilitarianism edge cases', canvasGPA:3.7, daysInactive:1 },
+    { id:11, name:'Lisa Park', initials:'LP', score:34, trend:'down', sessions:1, lastActive:'6 days ago', grade:'B', gap:"Can't distinguish positive & negative liberty", canvasGPA:3.0, daysInactive:6 },
+    { id:12, name:'Ahmed Hassan', initials:'AH', score:61, trend:'up', sessions:3, lastActive:'Today', grade:'C', gap:'Rousseau vs Locke distinction', canvasGPA:2.0, daysInactive:0 },
+    { id:13, name:'Jessica Taylor', initials:'JT', score:88, trend:'stable', sessions:4, lastActive:'Yesterday', grade:'A', gap:'None', canvasGPA:4.0, daysInactive:1 },
+    { id:14, name:'Kevin Nguyen', initials:'KN', score:47, trend:'down', sessions:1, lastActive:'4 days ago', grade:'B-', gap:'Hobbes state of nature misunderstood', canvasGPA:2.7, daysInactive:4 },
+    { id:15, name:'Olivia Foster', initials:'OF', score:72, trend:'up', sessions:3, lastActive:'Today', grade:'A-', gap:'Kantian ethics application weak', canvasGPA:3.7, daysInactive:0 },
+    { id:16, name:'Chris Anderson', initials:'CA', score:53, trend:'stable', sessions:2, lastActive:'3 days ago', grade:'C+', gap:'Conflates social contract across thinkers', canvasGPA:2.3, daysInactive:3 },
+    { id:17, name:'Priya Sharma', initials:'PS', score:94, trend:'up', sessions:7, lastActive:'Today', grade:'A+', gap:'None', canvasGPA:4.0, daysInactive:0 },
+    { id:18, name:'Daniel Wright', initials:'DW', score:41, trend:'down', sessions:0, lastActive:'9 days ago', grade:'C', gap:"Fundamental misunderstanding of Plato's forms", canvasGPA:2.0, daysInactive:9 },
+    { id:19, name:'Hannah Lee', initials:'HL', score:76, trend:'up', sessions:4, lastActive:'Yesterday', grade:'B+', gap:'Minor: Rawls vs Nozick', canvasGPA:3.3, daysInactive:1 },
+    { id:20, name:'Brandon Scott', initials:'BS', score:58, trend:'stable', sessions:2, lastActive:'2 days ago', grade:'B-', gap:"Rousseau's general will concept", canvasGPA:2.7, daysInactive:2 },
+    { id:21, name:'Nicole Rivera', initials:'NR', score:83, trend:'up', sessions:5, lastActive:'Today', grade:'B', gap:'None', canvasGPA:3.0, daysInactive:0 },
+    { id:22, name:'Jason Murphy', initials:'JM', score:36, trend:'down', sessions:0, lastActive:'7 days ago', grade:'A-', gap:"Memorizes but can't explain concepts", canvasGPA:3.7, daysInactive:7 },
+    { id:23, name:'Samantha Clark', initials:'SC', score:69, trend:'up', sessions:3, lastActive:'Yesterday', grade:'B', gap:'Utilitarianism vs deontology boundary', canvasGPA:3.0, daysInactive:1 },
+    { id:24, name:'Michael Torres', initials:'MT', score:51, trend:'down', sessions:1, lastActive:'4 days ago', grade:'C+', gap:'Weak on all Enlightenment thinkers', canvasGPA:2.3, daysInactive:4 },
+    { id:25, name:'Emily Watson', initials:'EW', score:77, trend:'stable', sessions:3, lastActive:'Today', grade:'A-', gap:'Slight weakness on Kantian autonomy', canvasGPA:3.7, daysInactive:0 },
+];
 
-            renderCourseList();
-            updateTopbar();
-            renderOverview();
-            renderRoster();
-        })();
-    </script>
+const courses = [
+    { code: 'POL 201', name: 'Political Philosophy', score: 62, color: '#3b82f6', students: 25 },
+    { code: 'POL 301', name: 'Modern Political Theory', score: 71, color: '#22c55e', students: 18 },
+    { code: 'POL 150', name: 'Intro to Government', score: 55, color: '#f59e0b', students: 45 },
+];
+
+const activityFeed = [
+    { text: '15 students completed Deep Dive sessions this week', time: '2h ago', color: '#22c55e' },
+    { text: "3 students hit \"I Don't Know\" on Rousseau's General Will", time: '4h ago', color: '#f59e0b' },
+    { text: 'Class engagement up 12% since Tuesday', time: '6h ago', color: '#3b82f6' },
+    { text: 'Jason M. flagged as surface learner — A- grade, 36 LATENT', time: '1d ago', color: '#ef4444' },
+    { text: "Maya W. hasn't engaged in 8 days", time: '1d ago', color: '#ef4444' },
+    { text: 'Priya S. achieved 94 LATENT Score — top of class', time: '2d ago', color: '#22c55e' },
+];
+
+// ===== HELPERS =====
+function scoreColor(s) { return s <= 40 ? '#ef4444' : s <= 60 ? '#f59e0b' : s <= 80 ? '#3b82f6' : '#22c55e'; }
+function scoreBadgeClass(s) { return s <= 40 ? 'red' : s <= 60 ? 'yellow' : s <= 80 ? 'blue' : 'green'; }
+function trendIcon(t) { return t === 'up' ? '↑' : t === 'down' ? '↓' : '→'; }
+function isMismatch(s) { return s.canvasGPA >= 3.0 && s.score <= 50; }
+
+// Animated counter
+function animateValue(el, start, end, duration) {
+    const startTime = performance.now();
+    const step = (now) => {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+        const current = Math.round(start + (end - start) * ease);
+        el.textContent = current;
+        if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+}
+
+// Smooth bezier path from points
+function bezierPath(points) {
+    if (points.length < 2) return '';
+    let d = `M ${points[0][0]},${points[0][1]}`;
+    for (let i = 1; i < points.length; i++) {
+        const prev = points[i - 1];
+        const curr = points[i];
+        const cpx = (prev[0] + curr[0]) / 2;
+        d += ` C ${cpx},${prev[1]} ${cpx},${curr[1]} ${curr[0]},${curr[1]}`;
+    }
+    return d;
+}
+
+// ===== RENDER =====
+function renderSidebar() {
+    const el = document.getElementById('sidebar-courses');
+    el.innerHTML = courses.map((c, i) => `
+        <div class="course-item ${i === 0 ? 'active' : ''}" onclick="selectCourse(${i})">
+            <div class="course-dot" style="background:${c.color}"></div>
+            <div class="course-info">
+                <div class="course-code">${c.code}</div>
+                <div class="course-name">${c.name}</div>
+            </div>
+            <div class="course-score" style="color:${scoreColor(c.score)}">${c.score}</div>
+        </div>
+    `).join('');
+}
+
+function renderStats() {
+    const el = document.getElementById('stat-row');
+    const stats = [
+        { label: 'Total Students', value: courseData.totalStudents, sub: `${courseData.activeThisWeek} active this week` },
+        { label: 'Class Average', value: courseData.avgScore, sub: `+${courseData.scoreTrend} pts this week`, subClass: 'up' },
+        { label: 'Avg Sessions/Week', value: courseData.avgSessions, sub: 'Per student' },
+        { label: 'Deep Dives Total', value: courseData.deepDiveTotal, sub: 'Across all students' },
+    ];
+    el.innerHTML = stats.map(s => `
+        <div class="stat-card">
+            <div class="stat-label">${s.label}</div>
+            <div class="stat-value">${s.value}</div>
+            <div class="stat-sub ${s.subClass || ''}">${s.sub}</div>
+        </div>
+    `).join('');
+}
+
+function renderGauge() {
+    const score = courseData.avgScore;
+    const circ = 326.7;
+    const offset = circ - (score / 100) * circ;
+    const fill = document.getElementById('gauge-fill');
+    fill.style.stroke = scoreColor(score);
+    setTimeout(() => { fill.style.strokeDashoffset = offset; }, 200);
+    animateValue(document.getElementById('gauge-value'), 0, score, 1800);
+}
+
+function renderDistribution() {
+    const bins = [0,0,0,0,0,0,0,0,0,0];
+    students.forEach(s => { const idx = Math.min(Math.floor(s.score / 10), 9); bins[idx]++; });
+    const max = Math.max(...bins);
+    const el = document.getElementById('distrib-bars');
+    el.innerHTML = bins.map((count, i) => {
+        const h = max > 0 ? (count / max) * 100 : 0;
+        const color = i <= 3 ? '#ef4444' : i <= 5 ? '#f59e0b' : i <= 7 ? '#3b82f6' : '#22c55e';
+        return `<div class="distrib-bar" style="height:${h}%;background:${color}">
+            <div class="bar-tooltip">${count} student${count !== 1 ? 's' : ''} (${i*10}-${i*10+9})</div>
+        </div>`;
+    }).join('');
+}
+
+function renderTopics() {
+    const el = document.getElementById('topic-list');
+    el.innerHTML = topics.map(t => {
+        const color = scoreColor(t.score);
+        return `<div class="topic-row">
+            <span class="topic-week">${t.week}</span>
+            <span class="topic-name">${t.name}</span>
+            <div class="topic-bar-bg"><div class="topic-bar-fill" style="width:${t.score}%;background:${color}"></div></div>
+            <span class="topic-score" style="color:${color}">${t.score}%</span>
+            <span class="topic-status">${t.status}</span>
+        </div>`;
+    }).join('');
+}
+
+function renderAttention() {
+    const atRisk = students.filter(s => s.score <= 50 || s.daysInactive >= 7 || s.trend === 'down')
+        .sort((a, b) => a.score - b.score).slice(0, 6);
+    document.getElementById('attn-count').textContent = atRisk.length;
+    const el = document.getElementById('attention-list');
+    el.innerHTML = atRisk.map(s => `
+        <div class="attention-item ${s.score <= 35 ? 'critical' : ''}" onclick="openStudent(${s.id})">
+            <div class="attn-avatar">${s.initials}</div>
+            <div class="attn-info">
+                <div class="attn-name">${s.name}${isMismatch(s) ? ' <span class="mismatch-flag">⚠ Mismatch</span>' : ''}</div>
+                <div class="attn-gap">${s.gap}</div>
+            </div>
+            <div>
+                <div class="attn-score" style="color:${scoreColor(s.score)}">${s.score}</div>
+                <div class="attn-trend ${s.trend === 'down' ? 'down' : ''}">${trendIcon(s.trend)}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderFeed() {
+    const el = document.getElementById('feed-list');
+    el.innerHTML = activityFeed.map(f => `
+        <div class="feed-item">
+            <div class="feed-dot" style="background:${f.color}"></div>
+            <div style="flex:1">${f.text}<div class="feed-time">${f.time}</div></div>
+        </div>
+    `).join('');
+}
+
+// ===== ROSTER =====
+let currentFilter = 'all';
+let currentSort = { key: 'name', dir: 'asc' };
+let filteredStudents = [...students];
+
+function renderRoster() {
+    const el = document.getElementById('roster-body');
+    el.innerHTML = filteredStudents.map(s => {
+        const mismatch = isMismatch(s);
+        return `<tr onclick="openStudent(${s.id})">
+            <td><div class="student-cell"><div class="student-avatar">${s.initials}</div><span class="student-name-text">${s.name}</span></div></td>
+            <td><span class="score-badge ${scoreBadgeClass(s.score)}">${s.score}</span></td>
+            <td><span class="trend-indicator ${s.trend}">${trendIcon(s.trend)} ${s.trend}</span></td>
+            <td>${s.sessions}</td>
+            <td><span class="last-active">${s.lastActive}</span></td>
+            <td>${s.grade}${mismatch ? ' <span class="mismatch-flag">⚠ Surface</span>' : ''}</td>
+            <td><span class="gap-text">${s.gap === 'None' ? '—' : s.gap}</span></td>
+        </tr>`;
+    }).join('');
+    document.getElementById('roster-footer').textContent = `Showing ${filteredStudents.length} of ${students.length} students`;
+}
+
+function filterRoster() {
+    const search = document.getElementById('roster-search-input').value.toLowerCase();
+    filteredStudents = students.filter(s => {
+        const matchSearch = !search || s.name.toLowerCase().includes(search) || s.gap.toLowerCase().includes(search);
+        if (!matchSearch) return false;
+        switch (currentFilter) {
+            case 'critical': return s.score < 40;
+            case 'warning': return s.score >= 40 && s.score <= 60;
+            case 'declining': return s.trend === 'down';
+            case 'mismatch': return isMismatch(s);
+            case 'inactive': return s.daysInactive >= 7;
+            default: return true;
+        }
+    });
+    applySort();
+    renderRoster();
+}
+
+function setFilter(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    filterRoster();
+}
+
+function sortRoster(key) {
+    if (currentSort.key === key) currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+    else { currentSort.key = key; currentSort.dir = 'asc'; }
+    // Update headers
+    document.querySelectorAll('.roster-table th').forEach(th => {
+        th.classList.remove('sorted');
+        const arrow = th.querySelector('.sort-arrow');
+        if (arrow) arrow.textContent = '';
+    });
+    applySort();
+    renderRoster();
+}
+
+function applySort() {
+    const { key, dir } = currentSort;
+    filteredStudents.sort((a, b) => {
+        let va = a[key], vb = b[key];
+        if (key === 'name') { va = va.toLowerCase(); vb = vb.toLowerCase(); }
+        if (key === 'trend') { const o = { up: 1, stable: 2, down: 3 }; va = o[va]; vb = o[vb]; }
+        if (key === 'lastActive') { va = a.daysInactive; vb = b.daysInactive; }
+        if (va < vb) return dir === 'asc' ? -1 : 1;
+        if (va > vb) return dir === 'asc' ? 1 : -1;
+        return 0;
+    });
+}
+
+// ===== INDIVIDUAL STUDENT =====
+function openStudent(id) {
+    const s = students.find(st => st.id === id);
+    if (!s) return;
+
+    document.getElementById('sv-avatar').textContent = s.initials;
+    document.getElementById('sv-name').textContent = s.name;
+    document.getElementById('sv-meta').textContent = `Member since Jan 2026 · ${s.sessions * 4 + Math.floor(Math.random() * 10)} Deep Dive sessions completed`;
+
+    const scoreEl = document.getElementById('sv-score');
+    scoreEl.textContent = s.score;
+    scoreEl.style.color = scoreColor(s.score);
+
+    document.getElementById('sv-canvas-grade').textContent = s.grade;
+
+    // Gap indicator between Canvas grade and LATENT score
+    const gapBadge = document.getElementById('sv-gap-badge');
+    const mismatch = isMismatch(s);
+    const scoreGPA = s.score / 25; // rough normalize to 4.0
+    const gapSize = Math.abs(s.canvasGPA - scoreGPA);
+    if (mismatch) {
+        gapBadge.className = 'score-gap-indicator danger';
+        gapBadge.textContent = '⚠ Surface learner detected';
+    } else if (s.canvasGPA >= 3.0 && s.score >= 70) {
+        gapBadge.className = 'score-gap-indicator aligned';
+        gapBadge.textContent = '✓ Grade aligned with understanding';
+    } else if (gapSize > 1) {
+        gapBadge.className = 'score-gap-indicator warning';
+        gapBadge.textContent = '⚠ Gap between grade & understanding';
+    } else {
+        gapBadge.className = 'score-gap-indicator aligned';
+        gapBadge.textContent = '✓ Scores aligned';
+    }
+
+    // Stats
+    document.getElementById('sv-stats').innerHTML = [
+        { label: 'LATENT Score', value: s.score, sub: s.trend === 'up' ? '+5 this week' : s.trend === 'down' ? '-3 this week' : 'Stable', subClass: s.trend === 'up' ? 'up' : s.trend === 'down' ? 'down' : '' },
+        { label: 'Canvas Grade', value: s.grade, sub: `GPA: ${s.canvasGPA}` },
+        { label: 'Sessions This Week', value: s.sessions, sub: s.sessions === 0 ? 'No activity' : 'Active' },
+        { label: 'Days Since Active', value: s.daysInactive, sub: s.daysInactive >= 7 ? '⚠ At risk' : s.daysInactive === 0 ? 'Active today' : `${s.daysInactive}d ago` },
+    ].map(st => `<div class="stat-card"><div class="stat-label">${st.label}</div><div class="stat-value">${st.value}</div><div class="stat-sub ${st.subClass || ''}">${st.sub}</div></div>`).join('');
+
+    renderTimeline(s);
+
+    // Topics with per-student variation
+    const topicScores = topics.map(t => {
+        const variance = (Math.random() - 0.5) * 30;
+        const adjusted = Math.max(5, Math.min(98, t.score + variance + (s.score - 62) * 0.3));
+        return { name: t.name, score: Math.round(adjusted) };
+    });
+    document.getElementById('sv-topics').innerHTML = topicScores.map(t => {
+        const c = scoreColor(t.score);
+        return `<div class="radar-item">
+            <span class="radar-label">${t.name}</span>
+            <div class="radar-bar-bg"><div class="radar-bar-fill" style="width:${t.score}%;background:${c}"></div></div>
+            <span class="radar-score" style="color:${c}">${t.score}</span>
+        </div>`;
+    }).join('');
+
+    // Sessions
+    const sessionData = [
+        { topic: `${topics[3].name} Review`, date: 'Today', duration: '23 min', change: s.trend === 'up' ? '+4' : '-2', dir: s.trend === 'up' ? 'up' : 'down' },
+        { topic: `${topics[2].name} Deep Dive`, date: 'Yesterday', duration: '18 min', change: '+2', dir: 'up' },
+        { topic: `${topics[1].name} Session`, date: '3 days ago', duration: '31 min', change: '+6', dir: 'up' },
+        { topic: `${topics[5].name} Review`, date: '5 days ago', duration: '15 min', change: '-1', dir: 'down' },
+    ];
+    document.getElementById('sv-sessions').innerHTML = sessionData.map(ss => `
+        <div class="session-item">
+            <div class="session-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg></div>
+            <div class="session-info"><div class="session-topic-name">${ss.topic}</div><div class="session-meta">${ss.date} · ${ss.duration}</div></div>
+            <div class="session-change ${ss.dir}">${ss.change}</div>
+        </div>
+    `).join('');
+
+    // Aha moments
+    const firstName = s.name.split(' ')[0];
+    const ahas = [
+        { time: 'Feb 5, 3:42pm', text: `${firstName} connected Plato's cave allegory to modern media manipulation without prompting.` },
+        { time: 'Feb 3, 11:15am', text: `Correctly derived the difference between positive and negative liberty, then applied it to a contemporary policy debate.` },
+        { time: 'Jan 30, 2:20pm', text: `Made an original connection between Hobbes' Leviathan and modern surveillance states — professor hadn't covered this angle.` },
+    ];
+    const visibleAhas = s.score > 60 ? ahas : s.score > 40 ? ahas.slice(0, 1) : [];
+    document.getElementById('sv-aha').innerHTML = visibleAhas.length > 0
+        ? visibleAhas.map(a => `<div class="aha-item"><div class="aha-time">${a.time}</div>${a.text}</div>`).join('')
+        : `<div style="color:var(--text-tertiary);font-size:var(--fs-sm);padding:12px;text-align:center">No aha moments captured yet — student needs more Deep Dive sessions.</div>`;
+
+    showView('student');
+}
+
+function renderTimeline(student) {
+    const svg = document.getElementById('sv-timeline');
+    const w = 600, h = 180, pad = 30;
+
+    // Generate LATENT score data
+    const latentPoints = [];
+    let score = student.score + (student.trend === 'down' ? 20 : student.trend === 'up' ? -15 : 5);
+    for (let i = 0; i < 8; i++) {
+        score += (Math.random() - 0.4) * 12;
+        score = Math.max(10, Math.min(95, score));
+        latentPoints.push(Math.round(score));
+    }
+    latentPoints[7] = student.score;
+
+    // Generate Canvas grade line (more stable)
+    const canvasNorm = student.canvasGPA * 25;
+    const canvasPoints = [];
+    for (let i = 0; i < 8; i++) {
+        canvasPoints.push(Math.round(canvasNorm + (Math.random() - 0.5) * 5));
+    }
+
+    const xStep = (w - pad * 2) / 7;
+    const yScale = (v) => pad + ((100 - v) / 100) * (h - pad * 2);
+
+    // Grid lines
+    let gridHtml = '';
+    [20, 40, 60, 80].forEach(v => {
+        const y = yScale(v);
+        gridHtml += `<line x1="${pad}" y1="${y}" x2="${w - pad}" y2="${y}" class="timeline-grid-line"/>`;
+        gridHtml += `<text x="${pad - 6}" y="${y + 4}" fill="var(--text-tertiary)" font-size="10" text-anchor="end">${v}</text>`;
+    });
+
+    // Bezier paths
+    const latentCoords = latentPoints.map((p, i) => [pad + i * xStep, yScale(p)]);
+    const canvasCoords = canvasPoints.map((p, i) => [pad + i * xStep, yScale(p)]);
+    const latentPath = bezierPath(latentCoords);
+    const canvasPath = bezierPath(canvasCoords);
+
+    // Area fill
+    const areaPath = latentPath + ` L ${pad + 7 * xStep},${h - pad} L ${pad},${h - pad} Z`;
+
+    // Week labels
+    const weeks = ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'Now'];
+    const labelHtml = weeks.map((l, i) => `<text x="${pad + i * xStep}" y="${h - 8}" fill="var(--text-tertiary)" font-size="10" text-anchor="middle">${l}</text>`).join('');
+
+    // Dots
+    const dotsHtml = latentCoords.map((c, i) => `<circle cx="${c[0]}" cy="${c[1]}" r="${i === 7 ? 5 : 3}" class="timeline-dot"/>`).join('');
+
+    svg.innerHTML = `
+        <defs><linearGradient id="tGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:var(--accent);stop-opacity:0.15"/>
+            <stop offset="100%" style="stop-color:var(--accent);stop-opacity:0"/>
+        </linearGradient></defs>
+        ${gridHtml}
+        <path d="${areaPath}" fill="url(#tGrad)"/>
+        <path d="${canvasPath}" class="timeline-line canvas" fill="none"/>
+        <path d="${latentPath}" class="timeline-line latent" fill="none"/>
+        ${dotsHtml}
+        ${labelHtml}
+    `;
+}
+
+// ===== NAVIGATION =====
+function showView(view) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + view).classList.add('active');
+    document.querySelectorAll('.sidebar-item').forEach(item => item.classList.toggle('active', item.dataset.nav === view));
+
+    const titles = { overview: 'Course Overview', roster: 'Student Roster', student: 'Student Detail', insights: 'Insights & Analytics' };
+    document.getElementById('top-title').textContent = titles[view] || '';
+    document.getElementById('top-sub').textContent = `${courseData.code} — ${courseData.name} · ${courseData.semester}`;
+
+    if (view === 'roster') {
+        filteredStudents = [...students];
+        currentFilter = 'all';
+        document.querySelectorAll('.filter-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
+        document.getElementById('roster-search-input').value = '';
+        filterRoster();
+    }
+
+    // Scroll to top
+    document.querySelector('.content').scrollTop = 0;
+}
+
+function selectCourse(idx) {
+    document.querySelectorAll('.course-item').forEach((c, i) => c.classList.toggle('active', i === idx));
+}
+
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('collapsed');
+}
+
+// ===== THEME =====
+function setTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.querySelectorAll('.theme-opt').forEach(o => o.classList.toggle('active', o.dataset.theme === theme));
+    document.getElementById('theme-dropdown').classList.remove('visible');
+}
+
+function toggleThemeDropdown() {
+    document.getElementById('theme-dropdown').classList.toggle('visible');
+}
+
+document.addEventListener('click', (e) => {
+    const dd = document.getElementById('theme-dropdown');
+    if (!e.target.closest('.top-bar-right') && dd.classList.contains('visible')) dd.classList.remove('visible');
+});
+
+// ===== KEYBOARD SHORTCUTS =====
+document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.key === '1') showView('overview');
+    if (e.key === '2') showView('roster');
+    if (e.key === '3') showView('insights');
+    if (e.key === 'Escape') {
+        const dd = document.getElementById('theme-dropdown');
+        if (dd.classList.contains('visible')) dd.classList.remove('visible');
+        else if (document.getElementById('view-student').classList.contains('active')) showView('roster');
+    }
+    if (e.key === 'b' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); toggleSidebar(); }
+    if (e.key === '/' && !e.metaKey) {
+        e.preventDefault();
+        showView('roster');
+        setTimeout(() => document.getElementById('roster-search-input').focus(), 100);
+    }
+});
+
+// ===== INIT =====
+renderSidebar();
+renderStats();
+renderGauge();
+renderDistribution();
+renderTopics();
+renderAttention();
+renderFeed();
+filteredStudents = [...students];
+renderRoster();
+</script>
 </body>
 </html>
