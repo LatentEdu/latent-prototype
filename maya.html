@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>LATENT — Meet Your Coach</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #fafafa; --bg-deep: #f0f0f2; --bg-card: #ffffff; --bg-input: #f5f5f7;
+            --text: #1d1d1f; --text-secondary: rgba(29,29,31,0.55); --text-tertiary: rgba(29,29,31,0.3);
+            --border: rgba(0,0,0,0.08); --border-focus: rgba(29,29,31,0.3);
+            --shadow: rgba(0,0,0,0.06); --btn-bg: #1d1d1f; --btn-text: #ffffff;
+            --success: #22c55e; --success-soft: rgba(34,197,94,0.1);
+            --danger: #ef4444; --danger-soft: rgba(239,68,68,0.1);
+            --accent-soft: rgba(29,29,31,0.05);
+            --maya-1: #d4cfc7; --maya-2: #a39e96; --maya-3: #726d65;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0a0a0a; --bg-deep: #050505; --bg-card: #141414; --bg-input: #1a1a1a;
+            --text: #f5f5f7; --text-secondary: rgba(245,245,247,0.55); --text-tertiary: rgba(245,245,247,0.3);
+            --border: rgba(255,255,255,0.07); --border-focus: rgba(245,245,247,0.3);
+            --shadow: rgba(0,0,0,0.5); --btn-bg: #f5f5f7; --btn-text: #0a0a0a;
+            --accent-soft: rgba(245,245,247,0.05);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg); color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            overscroll-behavior: none;
+            height: 100dvh; display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        /* ================================ */
+        /* TOPBAR                            */
+        /* ================================ */
+        .topbar {
+            position: relative; z-index: 100; padding: 0 48px; height: 64px;
+            display: flex; align-items: center; justify-content: space-between;
+            background: color-mix(in srgb, var(--bg) 80%, transparent);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); flex-shrink: 0;
+        }
+        .topbar-logo { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500; letter-spacing: 0.15em; color: var(--text); text-decoration: none; }
+        .topbar-center { position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; }
+        .topbar-av { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--maya-1), var(--maya-2), var(--maya-3)); display: flex; align-items: center; justify-content: center; }
+        .topbar-av svg { width: 14px; height: 14px; }
+        .topbar-name-col { display: flex; flex-direction: column; gap: 1px; }
+        .topbar-maya-label { font-size: 14px; font-weight: 600; letter-spacing: -0.01em; line-height: 1; }
+        .topbar-maya-status { font-size: 11px; color: var(--text-tertiary); line-height: 1; }
+        .topbar-right { display: flex; align-items: center; gap: 16px; }
+
+        .progress-container { position: relative; z-index: 99; height: 2px; background: var(--border); flex-shrink: 0; }
+        .progress-fill { height: 100%; background: var(--text); border-radius: 0 2px 2px 0; transition: width 0.6s cubic-bezier(0.16,1,0.3,1); width: 0%; }
+
+        /* ================================ */
+        /* CHARACTER PICKER                  */
+        /* ================================ */
+        .picker-overlay {
+            position: fixed; inset: 0; z-index: 200; background: var(--bg);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.5s cubic-bezier(0.4,0,0.2,1);
+        }
+        .picker-overlay.hidden { opacity: 0; pointer-events: none; }
+
+        .picker-header { text-align: center; margin-bottom: 28px; }
+        .picker-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--text-tertiary); text-transform: uppercase; font-weight: 500; margin-bottom: 10px; }
+        .picker-title { font-size: clamp(32px, 5vw, 52px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.15; }
+
+        .picker-cards {
+            display: flex; flex-direction: column; gap: 8px;
+            width: min(520px, 88vw); height: min(480px, 58vh);
+        }
+
+        .coach-card {
+            position: relative; width: 100%; border-radius: 20px;
+            cursor: pointer; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            flex: 1;
+            transition: flex 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .coach-card.maya-card {
+            background: linear-gradient(160deg,
+                color-mix(in srgb, var(--maya-1) 14%, var(--bg-card)),
+                color-mix(in srgb, var(--maya-2) 10%, var(--bg-card)));
+            border: 1px solid color-mix(in srgb, var(--maya-1) 18%, var(--border));
+        }
+        .coach-card.miles-card {
+            background: linear-gradient(160deg,
+                color-mix(in srgb, var(--maya-2) 10%, var(--bg-card)),
+                color-mix(in srgb, var(--maya-3) 8%, var(--bg-card)));
+            border: 1px solid color-mix(in srgb, var(--maya-2) 14%, var(--border));
+        }
+
+        /* Hover: hovered grows, sibling shrinks */
+        .picker-cards:hover .coach-card { flex: 0.55; }
+        .picker-cards:hover .coach-card:hover { flex: 1.45; }
+
+        .coach-card.disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .coach-inner {
+            display: flex; align-items: center; gap: 14px;
+            position: relative; z-index: 1;
+            transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+        }
+        .coach-icon {
+            width: 44px; height: 44px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .coach-icon.maya-grad { background: color-mix(in srgb, var(--maya-1) 25%, transparent); }
+        .coach-icon.miles-grad { background: color-mix(in srgb, var(--maya-2) 20%, transparent); }
+        .coach-icon svg { width: 20px; height: 20px; }
+        .maya-card .coach-icon svg { stroke: var(--maya-1); }
+        .miles-card .coach-icon svg { stroke: var(--maya-2); }
+        .coach-name-text { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; }
+
+        .coach-tag {
+            position: absolute; top: 14px; right: 16px;
+            padding: 4px 12px; border-radius: 100px;
+            font-size: 10px; font-weight: 500; font-family: 'DM Mono', monospace;
+            letter-spacing: 0.04em; z-index: 1;
+        }
+        .coach-tag.active { background: var(--success-soft); color: var(--success); }
+        .coach-tag.soon { background: var(--accent-soft); color: var(--text-tertiary); }
+
+        .picker-footer { margin-top: 28px; font-size: 12px; color: var(--text-tertiary); font-weight: 400; }
+        .picker-footer span { font-family: 'DM Mono', monospace; font-weight: 500; letter-spacing: 0.1em; color: var(--text-secondary); }
+
+        /* ================================ */
+        /* MAIN LAYOUT                       */
+        /* ================================ */
+        .main-layout { flex: 1; display: grid; grid-template-columns: 1fr; min-height: 0; transition: grid-template-columns 0.5s cubic-bezier(0.16,1,0.3,1); }
+        .main-layout.with-sidebar { grid-template-columns: 360px 1fr; }
+
+        .chat-col { display: flex; flex-direction: column; min-height: 0; }
+        .chat-scroll { flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--text-tertiary) transparent; }
+        .chat-scroll::-webkit-scrollbar { width: 4px; }
+        .chat-scroll::-webkit-scrollbar-thumb { background: var(--text-tertiary); border-radius: 4px; }
+        .chat-inner { max-width: 640px; width: 100%; margin: 0 auto; padding: 40px 24px 24px; display: flex; flex-direction: column; }
+
+        /* ================================ */
+        /* MESSAGES                           */
+        /* ================================ */
+        .msg-group { display: flex; gap: 10px; margin-bottom: 14px; animation: msgSlide 0.4s cubic-bezier(0.16,1,0.3,1) forwards; opacity: 0; }
+        .msg-group.maya { align-self: flex-start; max-width: 82%; }
+        .msg-group.user { align-self: flex-end; flex-direction: row-reverse; max-width: 70%; }
+
+        @keyframes msgSlide { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .maya-av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--maya-1), var(--maya-2), var(--maya-3)); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+        .maya-av svg { width: 16px; height: 16px; }
+
+        .bubbles { display: flex; flex-direction: column; gap: 3px; }
+        .bubble { padding: 11px 16px; font-size: 14.5px; line-height: 1.55; font-weight: 400; letter-spacing: -0.005em; }
+
+        .msg-group.maya .bubble { background: var(--bg-card); border: 1px solid var(--border); color: var(--text); }
+        .msg-group.maya .bubble:first-child { border-radius: 20px 20px 20px 6px; }
+        .msg-group.maya .bubble:not(:first-child):not(:last-child) { border-radius: 6px 20px 20px 6px; }
+        .msg-group.maya .bubble:last-child { border-radius: 6px 20px 20px 20px; }
+        .msg-group.maya .bubble:only-child { border-radius: 20px 20px 20px 8px; }
+
+        .msg-group.user .bubble { background: var(--btn-bg); color: var(--btn-text); }
+        .msg-group.user .bubble:only-child { border-radius: 20px 20px 8px 20px; }
+
+        .typing-dots { display: flex; gap: 5px; padding: 4px 2px; }
+        .typing-dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--text-tertiary); animation: dotBounce 1.3s ease-in-out infinite; }
+        .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes dotBounce { 0%,60%,100% { transform: translateY(0); opacity: 0.3; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+        /* ================================ */
+        /* WIDGETS                            */
+        /* ================================ */
+        .widget { margin: 2px 0 16px 44px; animation: msgSlide 0.35s cubic-bezier(0.16,1,0.3,1) forwards; opacity: 0; max-width: 480px; width: 100%; }
+        .pill-row { display: flex; gap: 8px; flex-wrap: wrap; }
+        .pill-btn { padding: 10px 22px; background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 100px; font-size: 14px; font-weight: 500; font-family: inherit; color: var(--text); cursor: pointer; transition: all 0.2s; }
+        .pill-btn:hover { border-color: var(--text-secondary); background: var(--accent-soft); }
+        .pill-btn.filled { background: var(--btn-bg); border-color: var(--btn-bg); color: var(--btn-text); }
+        .pill-btn.filled:hover { opacity: 0.85; }
+        .pill-btn:disabled { opacity: 0.3; pointer-events: none; }
+
+        .token-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; }
+        .token-steps { font-size: 13.5px; line-height: 1.8; color: var(--text-secondary); margin-bottom: 18px; }
+        .token-steps strong { color: var(--text); font-weight: 600; }
+        .step-num { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--accent-soft); border: 1px solid var(--border); font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-right: 6px; font-family: 'DM Mono', monospace; }
+        .token-input-row { display: flex; gap: 8px; }
+        .token-input-row input { flex: 1; padding: 14px 16px; background: var(--bg-input); border: 1.5px solid var(--border-focus); border-radius: 12px; font-size: 14px; font-family: 'DM Mono', monospace; color: var(--text); outline: none; transition: all 0.2s; }
+        .token-input-row input::placeholder { color: var(--text-secondary); }
+        .token-input-row input:focus { border-color: var(--text-secondary); box-shadow: 0 0 0 3px var(--accent-soft); }
+        .token-submit-btn { padding: 14px 22px; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: 12px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .token-submit-btn:hover { opacity: 0.85; }
+        .token-submit-btn:disabled { opacity: 0.35; pointer-events: none; }
+        .token-hint { font-size: 12px; color: var(--text-tertiary); margin-top: 10px; line-height: 1.4; }
+
+        .sync-pill { display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; background: var(--accent-soft); border-radius: 14px; font-size: 14px; color: var(--text-secondary); margin: 2px 0 14px 44px; animation: msgSlide 0.3s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .sync-pill.done { background: var(--success-soft); color: var(--success); }
+        .sync-spinner { width: 15px; height: 15px; border: 2px solid var(--border); border-top-color: var(--text-secondary); border-radius: 50%; animation: spin 0.8s linear infinite; flex-shrink: 0; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .launch-area { margin: 4px 0 20px 44px; animation: msgSlide 0.4s cubic-bezier(0.16,1,0.3,1) forwards; opacity: 0; }
+        .btn-launch { padding: 16px 40px; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: 14px; font-size: 16px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 10px; }
+        .btn-launch:hover { opacity: 0.85; transform: translateY(-2px); }
+
+        /* ================================ */
+        /* CHAT INPUT BAR                    */
+        /* ================================ */
+        .chat-input-bar { flex-shrink: 0; padding: 12px 24px 28px; }
+        .input-wrap { max-width: 640px; margin: 0 auto; display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 6px 6px 6px 18px; transition: border-color 0.2s, box-shadow 0.2s; }
+        .input-wrap:focus-within { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-soft); }
+        .input-wrap input { flex: 1; border: none; background: transparent; font-size: 14.5px; font-family: inherit; color: var(--text); outline: none; }
+        .input-wrap input::placeholder { color: var(--text-tertiary); }
+
+        .input-btn { width: 38px; height: 38px; border-radius: 12px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; }
+        .input-btn:hover { opacity: 0.8; transform: scale(0.96); }
+        .input-btn svg { width: 16px; height: 16px; }
+        .send-btn { background: var(--btn-bg); }
+        .send-btn svg { color: var(--btn-text); }
+
+        /* ================================ */
+        /* VOICE AGENT OVERLAY               */
+        /* ================================ */
+        .voice-overlay {
+            position: fixed; inset: 0; z-index: 300;
+            background: var(--bg);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.4,0,0.2,1), left 0.4s cubic-bezier(0.16,1,0.3,1);
+        }
+        .voice-overlay.active { opacity: 1; pointer-events: all; }
+        .voice-overlay.with-sidebar { left: 360px; }
+
+        .voice-header {
+            position: absolute; top: 0; left: 0; right: 0;
+            padding: 0 48px; height: 64px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+        .voice-header-label { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text-tertiary); letter-spacing: 0.08em; }
+        .voice-back-btn { font-size: 13px; color: var(--text-secondary); background: none; border: none; cursor: pointer; font-family: inherit; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; gap: 6px; }
+        .voice-back-btn:hover { background: var(--accent-soft); color: var(--text); }
+        .voice-back-btn svg { width: 14px; height: 14px; }
+
+        .voice-orb-container {
+            display: flex; flex-direction: column; align-items: center; gap: 32px;
+        }
+
+        .voice-orb {
+            width: 160px; height: 160px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--maya-1), var(--maya-2), var(--maya-3));
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .voice-orb::before {
+            content: ''; position: absolute; inset: -8px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--maya-1), var(--maya-2), var(--maya-3));
+            opacity: 0.15;
+            transition: all 0.4s;
+        }
+
+        .voice-orb.listening::before {
+            inset: -16px;
+            opacity: 0.2;
+            animation: orbPulse 2s ease-in-out infinite;
+        }
+
+        .voice-orb.speaking {
+            animation: orbSpeak 0.6s ease-in-out infinite alternate;
+        }
+
+        .voice-orb.speaking::before {
+            inset: -20px;
+            opacity: 0.25;
+            animation: orbPulse 1.2s ease-in-out infinite;
+        }
+
+        .voice-orb.thinking {
+            animation: orbThink 2s ease-in-out infinite;
+        }
+
+        .voice-orb.thinking::before {
+            inset: -12px;
+            opacity: 0.18;
+            animation: orbPulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes orbThink {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        @keyframes orbPulse {
+            0%, 100% { inset: -16px; opacity: 0.15; }
+            50% { inset: -28px; opacity: 0.08; }
+        }
+
+        @keyframes orbSpeak {
+            from { transform: scale(1); }
+            to { transform: scale(1.06); }
+        }
+
+        .voice-orb svg { width: 48px; height: 48px; color: white; }
+
+        .voice-status {
+            font-size: 16px; font-weight: 400; color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+
+        .voice-status.active-listening { color: var(--text); }
+
+        .voice-transcript {
+            font-size: 14px; color: var(--text-tertiary);
+            max-width: 400px; text-align: center; line-height: 1.5;
+            min-height: 42px;
+            font-style: italic;
+        }
+
+        .voice-controls {
+            position: absolute; bottom: 32px; left: 0; right: 0;
+            display: flex; flex-direction: column; align-items: center; gap: 16px;
+            padding: 0 32px;
+        }
+
+        .voice-type-bar {
+            display: flex; align-items: center; gap: 8px;
+            width: 100%; max-width: 440px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 6px 6px 6px 16px;
+            transition: border-color 0.2s;
+        }
+        .voice-type-bar:focus-within { border-color: var(--border-focus); }
+
+        .voice-type-bar input {
+            flex: 1; background: none; border: none; outline: none;
+            font-size: 14px; font-family: inherit; color: var(--text);
+            padding: 8px 0;
+        }
+        .voice-type-bar input::placeholder { color: var(--text-tertiary); }
+
+        .voice-type-send {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: var(--btn-bg); border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: opacity 0.2s;
+        }
+        .voice-type-send:hover { opacity: 0.8; }
+        .voice-type-send svg { width: 16px; height: 16px; color: var(--btn-text); }
+
+        .voice-btn-row {
+            display: flex; align-items: center; gap: 12px;
+        }
+
+        .voice-launch-area {
+            animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+        }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .voice-end-btn {
+            padding: 14px 36px;
+            background: var(--danger);
+            color: white;
+            border: none; border-radius: 100px;
+            font-size: 14px; font-weight: 600; font-family: inherit;
+            cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .voice-end-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+        .voice-end-btn svg { width: 16px; height: 16px; }
+
+        .voice-text-switch {
+            padding: 14px 28px;
+            background: var(--bg-card); color: var(--text-secondary);
+            border: 1px solid var(--border); border-radius: 100px;
+            font-size: 14px; font-weight: 500; font-family: inherit;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .voice-text-switch:hover { border-color: var(--text-secondary); color: var(--text); }
+
+        /* ================================ */
+        /* SIDEBAR (LEFT)                    */
+        /* ================================ */
+        .sidebar {
+            border-right: 1px solid var(--border); background: var(--bg-deep);
+            padding: 28px 24px; overflow-y: auto;
+            animation: sideIn 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+            display: flex; flex-direction: column; gap: 16px;
+            scrollbar-width: thin; scrollbar-color: var(--text-tertiary) transparent;
+            order: -1;
+        }
+        @keyframes sideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .sb-title { font-size: 11px; font-weight: 400; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; display: flex; align-items: center; gap: 8px; }
+        .sb-count { font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 7px; background: var(--success-soft); color: var(--success); border-radius: 100px; font-weight: 400; }
+
+        .sb-list { display: flex; flex-direction: column; background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; }
+        .sb-course { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; animation: courseSlide 0.4s cubic-bezier(0.16,1,0.3,1) forwards; opacity: 0; transition: background 0.2s; }
+        .sb-course:hover { background: var(--accent-soft); }
+        .sb-course:not(:last-child) { border-bottom: 1px solid var(--border); }
+        @keyframes courseSlide { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        .sb-course-name { font-size: 13px; font-weight: 400; color: var(--text); }
+        .sb-course-code { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-tertiary); margin-top: 2px; }
+
+        .sb-check { width: 18px; height: 18px; background: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .sb-check svg { width: 10px; height: 10px; color: white; }
+
+        .sb-stats { display: flex; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .sb-stat { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 8px; }
+        .sb-stat:not(:last-child) { border-right: 1px solid var(--border); }
+        .sb-stat-val { font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 400; color: var(--text); }
+        .sb-stat-lbl { font-size: 9px; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 400; }
+
+        .sb-schedule { display: flex; flex-direction: column; background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border); overflow: hidden; }
+        .sb-sched-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; animation: courseSlide 0.4s cubic-bezier(0.16,1,0.3,1) forwards; opacity: 0; }
+        .sb-sched-row:not(:last-child) { border-bottom: 1px solid var(--border); }
+        .sb-sched-code { font-size: 12px; font-weight: 500; }
+        .sb-sched-detail { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-secondary); text-align: right; }
+        .sb-placeholder { padding: 14px; font-size: 12px; color: var(--text-tertiary); text-align: center; }
+
+        /* ================================ */
+        /* MOBILE                             */
+        /* ================================ */
+        @media (max-width: 860px) {
+            .topbar { padding: 0 20px; }
+            .topbar-center { display: none; }
+            .main-layout.with-sidebar { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .chat-inner { padding: 24px 16px 16px; }
+            .chat-input-bar { padding: 12px 16px 20px; }
+            .widget, .sync-pill, .launch-area { margin-left: 0; }
+            .msg-group.maya { max-width: 90%; }
+            .picker-cards { width: 90%; max-width: 380px; }
+            .voice-header { padding: 0 20px; }
+            .voice-overlay.with-sidebar { left: 0; }
+        }
+
+        @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+    </style>
+</head>
+<body>
+
+    <!-- CHARACTER PICKER -->
+    <div class="picker-overlay" id="pickerOverlay">
+        <div class="picker-header">
+            <div class="picker-label">Onboarding</div>
+            <h1 class="picker-title">Choose your coach</h1>
+        </div>
+
+        <div class="picker-cards">
+            <div class="coach-card maya-card" onclick="pickCoach('maya')">
+                <div class="coach-inner">
+                    <div class="coach-icon maya-grad">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                    </div>
+                    <span class="coach-name-text">Maya</span>
+                </div>
+            </div>
+
+            <div class="coach-card miles-card disabled" onclick="pickCoach('miles')">
+                <span class="coach-tag soon">COMING SOON</span>
+                <div class="coach-inner">
+                    <div class="coach-icon miles-grad">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                    </div>
+                    <span class="coach-name-text">Miles</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="picker-footer">Powered by <span>LATENT</span></div>
+    </div>
+
+    <!-- VOICE AGENT OVERLAY -->
+    <div class="voice-overlay" id="voiceOverlay">
+        <div class="voice-header">
+            <span class="voice-header-label">VOICE MODE</span>
+            <button class="voice-back-btn" onclick="exitVoiceAgent()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                Close
+            </button>
+        </div>
+
+        <div class="voice-orb-container">
+            <div class="voice-orb" id="voiceOrb">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                    <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+                </svg>
+            </div>
+            <div class="voice-status" id="voiceStatus">Connecting to Maya...</div>
+            <div class="voice-transcript" id="voiceTranscript"></div>
+        </div>
+
+        <div class="voice-controls">
+            <div class="voice-type-bar" id="voiceTypeBar">
+                <input type="text" id="voiceTextInput" placeholder="Paste your Canvas access token here..." autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter')sendVoiceText()">
+                <button class="voice-type-send" onclick="sendVoiceText()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+            </div>
+            <div class="voice-launch-area" id="voiceLaunchArea" style="display:none;">
+                <button class="btn-launch" onclick="exitVoiceAgent(); launchAcademy();">Launch Academy <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
+            </div>
+            <div class="voice-btn-row">
+                <button class="voice-text-switch" onclick="exitVoiceAgent()">Switch to text</button>
+                <button class="voice-end-btn" onclick="exitVoiceAgent()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    End
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div class="topbar">
+        <a href="latent-marketing.html" class="topbar-logo">LATENT</a>
+        <div class="topbar-center" id="topbarCenter" style="display:none;">
+            <div class="topbar-av">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>
+                </svg>
+            </div>
+            <div class="topbar-name-col">
+                <div class="topbar-maya-label">Maya</div>
+                <div class="topbar-maya-status" id="mayaStatus">online</div>
+            </div>
+        </div>
+        <div class="topbar-right"></div>
+    </div>
+
+    <div class="progress-container"><div class="progress-fill" id="progressFill"></div></div>
+
+    <div class="main-layout" id="mainLayout">
+        <div class="chat-col">
+            <div class="chat-scroll" id="chatScroll">
+                <div class="chat-inner" id="chatInner"></div>
+            </div>
+            <div class="chat-input-bar" id="chatInputBar">
+                <div class="input-wrap" id="inputWrap">
+                    <input type="text" id="chatInput" placeholder="Type a message..." autocomplete="off" onkeydown="if(event.key==='Enter')sendChat()">
+                    <button class="input-btn send-btn" onclick="sendChat()" title="Send">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chat = document.getElementById('chatInner');
+        const scroll = document.getElementById('chatScroll');
+        const input = document.getElementById('chatInput');
+        let phase = 'init', userName = '', courses = [], scheduleIdx = 0;
+        let voiceAgentActive = false, voiceSimInterval = null;
+
+        const demoCourses = [
+            { id: 1, name: 'Hybrid Studio', code: 'ARC 301/402' },
+            { id: 2, name: 'Latin American Modern Architecture', code: 'ARC 424/524' },
+            { id: 3, name: 'Construction Methods', code: 'ARC 418/518' },
+            { id: 4, name: 'Political Science', code: 'POL 201' },
+        ];
+
+        const setProgress = p => document.getElementById('progressFill').style.width = p + '%';
+        const setStatus = t => document.getElementById('mayaStatus').textContent = t;
+        const scrollDown = () => requestAnimationFrame(() => scroll.scrollTop = scroll.scrollHeight);
+        const wait = ms => new Promise(r => setTimeout(r, ms));
+
+        // ================================
+        // CHARACTER PICKER
+        // ================================
+        function pickCoach(who) {
+            if (who === 'miles') return;
+            const overlay = document.getElementById('pickerOverlay');
+            overlay.classList.add('hidden');
+            document.getElementById('topbarCenter').style.display = 'flex';
+            setTimeout(() => { overlay.remove(); begin(); }, 500);
+        }
+
+        // ================================
+        // VOICE AGENT — OpenAI Realtime API (WebRTC)
+        // ================================
+        const OPENAI_KEY = 'YOUR_OPENAI_KEY_HERE';
+        let rtcPc = null, rtcDc = null, rtcStream = null, rtcAudioEl = null;
+        const assistantTranscripts = {};
+
+        const MAYA_VOICE_INSTRUCTIONS = `LANGUAGE: English only, always. No exceptions.
+
+You are Maya — you're helping a college student at Miami University (Oxford, Ohio) get set up on LATENT, an app that measures what they actually understand vs what they just memorized.
+
+═══════════════════════════════════
+PERSONALITY
+═══════════════════════════════════
+- Warm and genuine. Like a smart friend who's happy to help — not a hype man.
+- Short turns. 1-3 sentences MAX. This is a conversation, not a monologue.
+- Use contractions. Casual but clear. You're approachable, not performative.
+- Examples of YOUR vibe:
+  "Hey, welcome to LATENT — I'm Maya. I'll be walking you through getting set up."
+  "Cool, nice to meet you."
+  "Okay so you're on Canvas — perfect, that makes this easy."
+  "Alright, I pulled four courses."
+- NEVER say: "Great question!", "Absolutely!", "I'd be happy to!", "No worries!", "Sure thing!", "Of course!", "Yooo!", "Let's go!" or any AI-bot clichés or hype phrases.
+- React naturally when something is funny or unexpected, but don't force energy.
+
+═══════════════════════════════════
+CORE RULES
+═══════════════════════════════════
+1. ONE STEP AT A TIME. Never combine steps. Never jump ahead. Finish the current step completely before moving to the next.
+2. WAIT FOR THE USER. After you ask something, STOP. Do not continue until they respond. Do not anticipate their answer.
+3. CONFIRM EVERYTHING. Never assume you heard correctly. Repeat back what you understood and ask "right?" or "did I get that?"
+4. IF SOMETHING IS MISSING, ASK. Don't guess. If they give a time but no days, ask "what days?" If they say a day but no time, ask "what time?"
+5. TYPED INPUT: When the user types something (text message), acknowledge it naturally by voice. "Got it, I see that" or "Perfect, thanks for typing that."
+6. STAY ON TRACK. If they wander off topic: "Ha, fair — but let me finish getting you set up first."
+
+═══════════════════════════════════
+ONBOARDING FLOW — follow exactly
+═══════════════════════════════════
+
+STEP 1: GREET
+- Welcome them. Introduce yourself as Maya.
+- Example: "Hey, welcome to LATENT — I'm Maya. I'm gonna walk you through getting set up, it'll just take a couple minutes."
+- STOP. Don't ask for name yet — we'll get it from Canvas.
+
+STEP 2: LEARNING GOALS
+- Ask what they want to get out of LATENT. Be direct but open-ended.
+- Say: "Before we get into setup — what are you hoping to get out of this? Like, what's the thing you want help with most when it comes to your classes?"
+- STOP. Wait for their answer.
+- Listen and respond specifically to what they said. Don't give a generic response.
+- Keep your response to 1-2 sentences. Then transition: "Alright, let me get your courses connected."
+
+STEP 3: CANVAS TOKEN — STEP BY STEP
+- Ask: "You're on Canvas, right?"
+- STOP. Wait.
+- If no: "No problem — you can connect later in settings." Jump to STEP 6.
+- If yes, walk them through ONE step at a time:
+
+  3a: "Open Canvas and click Account in the left sidebar."
+      STOP. Wait for confirmation.
+
+  3b: "Now click Settings."
+      STOP. Wait.
+
+  3c: "Scroll down to Approved Integrations. Hit New Access Token."
+      STOP. Wait.
+
+  3d: "Name it anything — LATENT works. Then hit Generate Token."
+      STOP. Wait.
+
+  3e: "Copy that long string and paste it into the text box at the bottom of this screen."
+      STOP. Wait for them to paste it.
+
+STEP 4: NAME PREFERENCE (after Canvas connects)
+- The system will tell you the student's full name and courses from Canvas.
+- When you receive this info, say: "Nice, I connected to your Canvas. I can see your name is [Full Name]."
+- Then list the courses: "And you've got [course 1], [course 2], [course 3], and [course 4]."
+- Ask about courses first: "Does that look right? Anything missing?"
+- STOP. Wait for confirmation.
+- Then ask about name: "What would you like me to call you — [first name], [last name], or something else?"
+- STOP. Wait. Store whatever they say as their preferred name.
+
+STEP 5: CLASS SCHEDULE — ONE COURSE AT A TIME
+- Say: "Okay, last thing — I need your class times for your study calendar."
+- Ask ONE course at a time using COURSE NAME (never the code):
+  "When does [Course Name] meet?"
+  STOP. Wait.
+
+- REPEAT back days AND time: "Monday, Wednesday, Friday — ten to eleven fifty. Right?"
+  STOP. Wait for confirmation.
+  If days missing: "What days?"
+  If time missing: "What time?"
+  If they correct: update and re-confirm.
+
+- Move through each course one at a time. Same process.
+
+STEP 6: SUMMARY & CONFIRMATION
+- Recap everything:
+  "Alright, let me make sure I've got it all."
+  List each course with time.
+  "Sound right?"
+- STOP. Wait.
+- Fix anything they correct.
+
+STEP 7: DONE
+- "You're all set, [preferred name]. Your Academy is ready — hit the Launch button at the bottom."
+- Keep it warm but simple. Don't oversell it.
+
+═══════════════════════════════════
+IF THEY ASK WHAT LATENT IS
+═══════════════════════════════════
+"LATENT measures what you actually understand — not just whether you turned something in. Think of it like a study partner that figures out what you really know versus what you just crammed."`;
+
+        async function openVoiceAgent() {
+            voiceAgentActive = true;
+            const overlay = document.getElementById('voiceOverlay');
+            const status = document.getElementById('voiceStatus');
+            const orb = document.getElementById('voiceOrb');
+            const transcript = document.getElementById('voiceTranscript');
+
+            overlay.classList.add('active');
+            // Show sidebar alongside voice overlay if it exists
+            if (document.getElementById('mainLayout').classList.contains('with-sidebar')) {
+                overlay.classList.add('with-sidebar');
+            }
+            status.textContent = 'Connecting to Maya...';
+            status.classList.remove('active-listening');
+            transcript.textContent = '';
+            orb.className = 'voice-orb';
+
+            try {
+                // 1. Get microphone
+                rtcStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const [audioTrack] = rtcStream.getAudioTracks();
+
+                // 2. Create WebRTC peer connection
+                rtcPc = new RTCPeerConnection();
+
+                // 3. Handle remote audio (Maya's voice)
+                rtcAudioEl = document.createElement('audio');
+                rtcAudioEl.autoplay = true;
+                document.body.appendChild(rtcAudioEl);
+                rtcPc.ontrack = (e) => { rtcAudioEl.srcObject = e.streams[0]; };
+
+                // 4. Add local mic track
+                rtcPc.addTrack(audioTrack, rtcStream);
+
+                // 5. Create data channel for events
+                rtcDc = rtcPc.createDataChannel('oai-events');
+
+                rtcDc.addEventListener('open', () => {
+                    console.log('[Maya Voice] Data channel open');
+                    orb.className = 'voice-orb listening';
+                    status.textContent = 'Connected';
+                    status.classList.add('active-listening');
+
+                    // Trigger Maya's opening greeting — STEP 1 + STEP 2
+                    rtcDc.send(JSON.stringify({
+                        type: 'response.create',
+                        response: {
+                            instructions: 'Do STEP 1: Welcome them — "Hey, welcome to LATENT — I\'m Maya. I\'m gonna walk you through getting set up, just takes a couple minutes." Then go directly into STEP 2: Ask about their learning goals — "Before we get into setup — what are you hoping to get out of this? Like, what\'s the thing you want help with most when it comes to your classes?" Then STOP. Wait for their answer.',
+                            max_output_tokens: 250
+                        }
+                    }));
+                });
+
+                rtcDc.addEventListener('message', (e) => {
+                    try { handleRealtimeEvent(JSON.parse(e.data)); }
+                    catch (err) { console.warn('[Maya Voice] Parse error:', err); }
+                });
+
+                // 6. Create SDP offer
+                await rtcPc.setLocalDescription();
+
+                // 7. Send offer + session config to OpenAI
+                const sessionConfig = {
+                    type: 'realtime',
+                    model: 'gpt-realtime',
+                    instructions: MAYA_VOICE_INSTRUCTIONS,
+                    audio: {
+                        input: { transcription: { model: 'gpt-4o-mini-transcribe' } },
+                        output: { voice: 'coral' }
+                    }
+                };
+
+                const fd = new FormData();
+                fd.set('sdp', rtcPc.localDescription.sdp);
+                fd.set('session', JSON.stringify(sessionConfig));
+
+                const resp = await fetch('https://api.openai.com/v1/realtime/calls', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${OPENAI_KEY}` },
+                    body: fd
+                });
+
+                if (!resp.ok) {
+                    const errText = await resp.text();
+                    throw new Error(`OpenAI returned ${resp.status}: ${errText}`);
+                }
+
+                // 8. Set remote SDP answer
+                const answerSdp = await resp.text();
+                await rtcPc.setRemoteDescription({ type: 'answer', sdp: answerSdp });
+
+                console.log('[Maya Voice] WebRTC connected!');
+
+            } catch (err) {
+                console.error('[Maya Voice] Connection failed:', err);
+                status.textContent = 'Connection failed';
+                transcript.textContent = err.message?.includes('Permission')
+                    ? 'Microphone access denied — check browser permissions'
+                    : 'Could not connect — check console for details';
+                orb.className = 'voice-orb';
+
+                // Auto-fallback to text after 3s
+                setTimeout(() => {
+                    if (voiceAgentActive) { exitVoiceAgent(); textMode(); }
+                }, 3000);
+            }
+        }
+
+        let mayaIsResponding = false; // Track if Maya is generating a response
+
+        function handleRealtimeEvent(evt) {
+            const transcript = document.getElementById('voiceTranscript');
+            const status = document.getElementById('voiceStatus');
+            const orb = document.getElementById('voiceOrb');
+            const itemId = evt.item_id;
+
+            switch (evt.type) {
+                // Maya is generating a response (thinking)
+                case 'response.created':
+                    mayaIsResponding = true;
+                    // Only show thinking if she's not already speaking
+                    if (!orb.classList.contains('speaking')) {
+                        orb.className = 'voice-orb thinking';
+                        status.textContent = 'Maya is thinking...';
+                        status.classList.remove('active-listening');
+                    }
+                    break;
+
+                // Maya starts speaking (audio playing)
+                case 'output_audio_buffer.started':
+                    mayaIsResponding = true;
+                    orb.className = 'voice-orb speaking';
+                    status.textContent = 'Maya is speaking...';
+                    status.classList.remove('active-listening');
+                    break;
+
+                // Maya stops speaking (audio done)
+                case 'output_audio_buffer.stopped':
+                    // Don't switch to listening yet — wait for response.done
+                    break;
+
+                // Maya's full response is complete
+                case 'response.done':
+                    mayaIsResponding = false;
+                    orb.className = 'voice-orb listening';
+                    status.textContent = 'Listening...';
+                    status.classList.add('active-listening');
+                    // Clear Maya's transcript after a moment
+                    setTimeout(() => {
+                        if (!mayaIsResponding && status.textContent === 'Listening...') {
+                            transcript.textContent = '';
+                        }
+                    }, 3000);
+                    break;
+
+                // Maya's speech transcript streaming in
+                case 'response.output_audio_transcript.delta':
+                    if (itemId) {
+                        assistantTranscripts[itemId] = (assistantTranscripts[itemId] || '') + evt.delta;
+                        transcript.style.color = 'var(--text-tertiary)';
+                        transcript.textContent = assistantTranscripts[itemId];
+                    }
+                    // Ensure orb shows speaking
+                    if (!orb.classList.contains('speaking')) {
+                        orb.className = 'voice-orb speaking';
+                        status.textContent = 'Maya is speaking...';
+                        status.classList.remove('active-listening');
+                    }
+                    break;
+
+                // Maya's speech transcript done
+                case 'response.output_audio_transcript.done':
+                    if (itemId && evt.transcript) {
+                        assistantTranscripts[itemId] = evt.transcript;
+                        transcript.style.color = 'var(--text-tertiary)';
+                        transcript.textContent = evt.transcript;
+                        // Detect wrap-up — show Launch Academy button
+                        const lower = evt.transcript.toLowerCase();
+                        if (lower.includes('all set') || lower.includes('launch') || lower.includes('academy is ready')) {
+                            if (courses.length > 0) {
+                                setTimeout(showVoiceLaunch, 2000);
+                            }
+                        }
+                    }
+                    break;
+
+                // User started talking
+                case 'input_audio_buffer.speech_started':
+                    orb.className = 'voice-orb listening';
+                    status.textContent = 'Hearing you...';
+                    status.classList.add('active-listening');
+                    transcript.textContent = '';
+                    transcript.style.color = 'var(--text)';
+                    break;
+
+                // User stopped talking
+                case 'input_audio_buffer.speech_stopped':
+                    orb.className = 'voice-orb thinking';
+                    status.textContent = 'Maya is thinking...';
+                    status.classList.remove('active-listening');
+                    break;
+
+                // User's words transcribed
+                case 'conversation.item.input_audio_transcription.completed':
+                    if (evt.transcript) {
+                        transcript.style.color = 'var(--text)';
+                        transcript.textContent = evt.transcript;
+                    }
+                    break;
+
+                // Session lifecycle
+                case 'session.created':
+                    console.log('[Maya Voice] Session created:', evt.session?.id);
+                    break;
+                case 'session.updated':
+                    console.log('[Maya Voice] Session updated');
+                    break;
+
+                // Errors
+                case 'error':
+                    console.error('[Maya Voice] API error:', evt.error);
+                    status.textContent = 'Error — try again';
+                    break;
+
+                default:
+                    console.log('[Maya Voice] Event:', evt.type);
+            }
+        }
+
+        function exitVoiceAgent() {
+            voiceAgentActive = false;
+            document.getElementById('voiceOverlay').classList.remove('active');
+            document.getElementById('voiceOrb').className = 'voice-orb';
+
+            // Cleanup WebRTC
+            if (rtcDc) { try { rtcDc.close(); } catch(e){} rtcDc = null; }
+            if (rtcPc) { try { rtcPc.close(); } catch(e){} rtcPc = null; }
+            if (rtcStream) { rtcStream.getTracks().forEach(t => t.stop()); rtcStream = null; }
+            if (rtcAudioEl) { rtcAudioEl.remove(); rtcAudioEl = null; }
+
+            input.focus();
+        }
+
+        let voicePhase = 'token'; // starts at token now — name comes from API
+        let canvasProfile = null; // { name, short_name } from Canvas
+
+        // ================================
+        // CANVAS API
+        // ================================
+        const CANVAS_BASE = 'http://localhost:3001/api/v1'; // Proxy → miamioh.instructure.com
+
+        async function fetchCanvasData(token) {
+            const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
+            let profile = null, coursesData = null;
+
+            try {
+                // Fetch profile
+                const profResp = await fetch(`${CANVAS_BASE}/users/self`, { headers });
+                if (profResp.ok) {
+                    profile = await profResp.json();
+                    console.log('[Canvas] Profile:', profile.name, profile.short_name);
+                }
+            } catch (e) {
+                console.warn('[Canvas] Profile fetch failed (likely CORS):', e.message);
+            }
+
+            try {
+                const coursesResp = await fetch(`${CANVAS_BASE}/courses?enrollment_state=active&include[]=term&per_page=100`, { headers });
+                if (coursesResp.ok) {
+                    const raw = await coursesResp.json();
+
+                    console.table(raw.map(c => ({
+                        id: c.id, name: c.name, code: c.course_code,
+                        term: c.term?.name, term_id: c.enrollment_term_id,
+                        term_start: c.term?.start_at, term_end: c.term?.end_at,
+                        start: c.start_at, end: c.end_at
+                    })));
+
+                    // ─── FILTER: course start_at must fall within current semester ───
+                    // Spring: Jan 20 – May 31 | Fall: Aug 15 – Dec 31
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = now.getMonth(); // 0-indexed
+
+                    let semStart, semEnd;
+                    if (month <= 6) {
+                        // Spring semester window
+                        semStart = new Date(year, 0, 20);  // Jan 20
+                        semEnd = new Date(year, 4, 31);    // May 31
+                    } else {
+                        // Fall semester window
+                        semStart = new Date(year, 7, 15);  // Aug 15
+                        semEnd = new Date(year, 11, 31);   // Dec 31
+                    }
+
+                    console.log(`[Canvas] Semester window: ${semStart.toLocaleDateString()} – ${semEnd.toLocaleDateString()}`);
+
+                    const currentCourses = raw.filter(c => {
+                        if (!c.name) return false;
+                        // Use course start_at, fall back to term start_at
+                        const startStr = c.start_at || c.term?.start_at;
+                        const start = startStr ? new Date(startStr) : null;
+                        if (!start || start < semStart || start > semEnd) {
+                            console.log('[Canvas] Excluded:', c.name, '| start:', startStr || 'none');
+                            return false;
+                        }
+                        return true;
+                    });
+
+                    // ─── CLEAN UP NAMES ───
+                    function cleanCourseName(name) {
+                        let clean = name || '';
+                        clean = clean.replace(/\s+(Sp|Fa|Su|Wi)\s*\d{2,4}\s*$/i, '').trim();
+                        clean = clean.replace(/\s*\([A-Z]{2,4}\)\s*/g, ' ').trim();
+                        clean = clean.replace(/,.*$/, '').trim();
+                        clean = clean.replace(/\s+[-]?[A-Z]$/i, '').trim();
+                        clean = clean.replace(/^([A-Z]{2,})(\d)/, '$1 $2');
+                        clean = clean.replace(/\s+/g, ' ').trim();
+                        return clean;
+                    }
+
+                    // Deduplicate by id
+                    const seen = new Set();
+                    coursesData = currentCourses
+                        .filter(c => { if (seen.has(c.id)) return false; seen.add(c.id); return true; })
+                        .map(c => ({
+                            id: c.id,
+                            name: cleanCourseName(c.name),
+                            code: c.course_code || '',
+                            term: c.term?.name || ''
+                        }));
+
+                    console.log('[Canvas] Current courses:', coursesData.map(c => `${c.name} (raw: ${c.code})`));
+                }
+            } catch (e) {
+                console.warn('[Canvas] Courses fetch failed:', e.message);
+            }
+
+            // Fallback to demo data if CORS blocked
+            if (!profile) {
+                profile = { name: 'Deji Adesokan', short_name: 'Deji' };
+                console.log('[Canvas] Using demo profile (API blocked)');
+            }
+            if (!coursesData || coursesData.length === 0) {
+                coursesData = [...demoCourses];
+                console.log('[Canvas] Using demo courses (API blocked)');
+            }
+
+            return { profile, courses: coursesData };
+        }
+
+        // ================================
+        // VOICE TEXT INPUT
+        // ================================
+        function sendVoiceText() {
+            const vtInput = document.getElementById('voiceTextInput');
+            const txt = vtInput.value.trim();
+            if (!txt || !rtcDc || rtcDc.readyState !== 'open') return;
+            vtInput.value = '';
+
+            // Show what user typed
+            const transcript = document.getElementById('voiceTranscript');
+            transcript.style.color = 'var(--text)';
+            transcript.textContent = txt;
+
+            const looksLikeToken = txt.length > 20;
+
+            if (looksLikeToken && voicePhase === 'token') {
+                voicePhase = 'name-confirm';
+                // Hit Canvas API, build sidebar, then tell Maya what we found
+                voiceSyncWithCanvas(txt);
+                return; // Don't send token text to Maya — we'll send structured info after API call
+            }
+
+            // For name preference or other typed input
+            if (voicePhase === 'name-confirm') {
+                userName = txt;
+                voicePhase = 'schedule';
+            }
+
+            // Send typed text to Maya
+            rtcDc.send(JSON.stringify({
+                type: 'conversation.item.create',
+                item: {
+                    type: 'message',
+                    role: 'user',
+                    content: [{ type: 'input_text', text: txt }]
+                }
+            }));
+            rtcDc.send(JSON.stringify({
+                type: 'response.create',
+                response: { max_output_tokens: 300 }
+            }));
+        }
+
+        async function voiceSyncWithCanvas(token) {
+            const transcript = document.getElementById('voiceTranscript');
+            const status = document.getElementById('voiceStatus');
+            const orb = document.getElementById('voiceOrb');
+
+            orb.className = 'voice-orb thinking';
+            status.textContent = 'Connecting to Canvas...';
+            status.classList.remove('active-listening');
+            transcript.style.color = 'var(--text-tertiary)';
+            transcript.textContent = 'Connecting to Canvas...';
+            setProgress(30);
+
+            await wait(400);
+            transcript.textContent = 'Fetching your profile...';
+            setProgress(40);
+
+            // Real API call
+            const data = await fetchCanvasData(token);
+            canvasProfile = data.profile;
+            courses = data.courses;
+
+            transcript.textContent = 'Loading courses...';
+            setProgress(55);
+            await wait(400);
+
+            transcript.textContent = `Found ${courses.length} courses ✓`;
+            setProgress(75);
+
+            // Build sidebar with real/demo courses
+            buildSidebar();
+
+            await wait(600);
+
+            // Build a message for Maya with what we found
+            const courseNames = courses.map(c => c.name).join(', ');
+            const fullName = canvasProfile.name || 'Unknown';
+            const shortName = canvasProfile.short_name || fullName.split(' ')[0];
+
+            // Tell Maya the results so she can respond naturally
+            rtcDc.send(JSON.stringify({
+                type: 'conversation.item.create',
+                item: {
+                    type: 'message',
+                    role: 'user',
+                    content: [{ type: 'input_text', text: `[SYSTEM: Canvas connected successfully. Student's full name is "${fullName}" (short name: "${shortName}"). Found ${courses.length} courses: ${courseNames}. Now do the name preference step — tell them their name and ask what they'd like to be called. Then confirm courses look right.]` }]
+                }
+            }));
+            rtcDc.send(JSON.stringify({
+                type: 'response.create',
+                response: { max_output_tokens: 400 }
+            }));
+
+            // Update placeholder
+            const vtInput = document.getElementById('voiceTextInput');
+            vtInput.placeholder = 'Type preferred name or class times...';
+
+            status.textContent = 'Listening...';
+            status.classList.add('active-listening');
+            orb.className = 'voice-orb listening';
+        }
+
+        function showVoiceLaunch() {
+            document.getElementById('voiceLaunchArea').style.display = '';
+            document.getElementById('voiceTypeBar').style.display = 'none';
+            setProgress(100);
+        }
+
+        // ================================
+        // MESSAGES
+        // ================================
+        async function mayaSays(texts) {
+            setStatus('is typing...');
+            const group = document.createElement('div');
+            group.className = 'msg-group maya';
+            group.innerHTML = `
+                <div class="maya-av">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round">
+                        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/>
+                        <path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>
+                    </svg>
+                </div><div class="bubbles"></div>`;
+            chat.appendChild(group); scrollDown();
+            const bubbles = group.querySelector('.bubbles');
+            for (let i = 0; i < texts.length; i++) {
+                const b = document.createElement('div');
+                b.className = 'bubble';
+                b.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
+                bubbles.appendChild(b); scrollDown();
+                await wait(Math.min(300 + texts[i].length * 5, 1100));
+                b.innerHTML = texts[i]; scrollDown();
+                if (i < texts.length - 1) await wait(120);
+            }
+            setStatus('online');
+        }
+
+        function userSays(text) {
+            const g = document.createElement('div');
+            g.className = 'msg-group user';
+            g.innerHTML = `<div class="bubbles"><div class="bubble">${text}</div></div>`;
+            chat.appendChild(g); scrollDown();
+        }
+
+        function addWidget(html) {
+            const w = document.createElement('div');
+            w.className = 'widget'; w.innerHTML = html;
+            chat.appendChild(w); scrollDown(); return w;
+        }
+
+        function killPills() { document.querySelectorAll('.pill-btn:not(:disabled)').forEach(b => b.disabled = true); }
+
+        // ================================
+        // CONVERSATION ENGINE
+        // ================================
+        async function begin() {
+            await wait(500); setProgress(5);
+            await mayaSays([
+                "Hey! I'm <strong>Maya</strong> — your onboarding coach.",
+                "I'll get you set up in under two minutes. Quick and painless."
+            ]);
+            await wait(200);
+
+            // Offer voice agent first, text as fallback
+            await mayaSays(["Want to do this by voice or text?"]);
+
+            addWidget(`
+                <div class="pill-row">
+                    <button class="pill-btn filled" onclick="killPills(); userSays('Voice'); openVoiceAgent();">
+                        <span style="display:flex;align-items:center;gap:8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+                            Talk to me
+                        </span>
+                    </button>
+                    <button class="pill-btn" onclick="killPills(); userSays('Text'); textMode();">Type instead</button>
+                </div>
+            `);
+        }
+
+        async function textMode() {
+            await mayaSays(["No problem — let's do text.", "Before we get into setup — what are you hoping to get out of LATENT? Like, what's the thing you want help with most?"]);
+            phase = 'ask-goals';
+            input.focus();
+        }
+
+        function sendChat() {
+            const txt = input.value.trim();
+            if (!txt) return;
+            input.value = '';
+            userSays(txt);
+            route(txt);
+        }
+
+        async function route(text) {
+            switch (phase) {
+                case 'ask-goals':
+                    phase = '_'; setProgress(10);
+                    await mayaSays(["Got it — that's exactly the kind of thing LATENT helps with."]);
+                    await wait(200);
+                    await lmsChoice(); break;
+                case 'token-wait':
+                    phase = '_'; await runSync(text); break;
+                case 'name-pref':
+                    userName = text.split(' ')[0];
+                    userName = userName.charAt(0).toUpperCase() + userName.slice(1).toLowerCase();
+                    phase = '_'; setProgress(80);
+                    await mayaSays([`Got it, ${userName}.`]);
+                    await afterSync(); break;
+                case 'schedule-input':
+                    phase = '_'; await handleSchedule(text); break;
+                case 'done':
+                    await mayaSays(["Hit that Launch button below!"]); break;
+            }
+        }
+
+        async function lmsChoice() {
+            await mayaSays(["Alright — let me connect your courses. You're on <strong>Canvas</strong>, right?"]);
+            addWidget(`<div class="pill-row">
+                <button class="pill-btn filled" onclick="pickLMS('canvas')">Yes, Canvas</button>
+                <button class="pill-btn" onclick="pickLMS('other')">Different LMS</button>
+                <button class="pill-btn" onclick="pickLMS('none')">No LMS</button>
+            </div>`);
+        }
+
+        async function pickLMS(c) {
+            killPills();
+            if (c === 'canvas') { userSays('Yes, Canvas'); setProgress(25); await showTokenStep(); }
+            else if (c === 'none') { userSays("I don't use one"); await mayaSays(["No problem — add courses later in Settings."]); setProgress(90); phase = 'done'; showLaunch(); }
+            else { userSays('Different LMS'); await mayaSays(["We're adding Blackboard and Moodle soon.", "Got Canvas access too? Otherwise we'll skip."]); addWidget(`<div class="pill-row"><button class="pill-btn filled" onclick="killPills(); userSays('I have Canvas'); showTokenStep();">I have Canvas too</button><button class="pill-btn" onclick="killPills(); userSays('Skip'); skipFinish();">Skip</button></div>`); }
+        }
+
+        async function skipFinish() { await mayaSays(["No problem — connect anytime from Settings."]); setProgress(90); phase = 'done'; showLaunch(); }
+
+        async function showTokenStep() {
+            await mayaSays(["I need your Canvas access token to pull your courses and profile.", "Takes 30 seconds — here's how:"]);
+            const w = document.createElement('div');
+            w.style.cssText = 'margin: 2px 0 16px 44px; max-width: 480px; width: 100%;';
+            w.innerHTML = `
+                <div class="token-card">
+                    <div class="token-steps">
+                        <div style="margin-bottom:6px"><span class="step-num">1</span> Go to <strong>miamioh.instructure.com</strong></div>
+                        <div style="margin-bottom:6px"><span class="step-num">2</span> Click <strong>Account → Settings</strong></div>
+                        <div style="margin-bottom:14px"><span class="step-num">3</span> Click <strong>"+ New Access Token"</strong> → copy it</div>
+                    </div>
+                    <div style="font-size:12px;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;font-weight:500;">Access Token</div>
+                    <div class="token-input-row">
+                        <input type="text" id="tokenField" placeholder="Paste your token here..." autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter')submitToken()">
+                        <button class="token-submit-btn" id="tokenBtn" onclick="submitToken()">Connect</button>
+                    </div>
+                    <div class="token-hint">Your token stays on your device. We never store it.</div>
+                </div>`;
+            chat.appendChild(w);
+            scrollDown();
+            phase = 'token-wait';
+            setTimeout(() => { const f = document.getElementById('tokenField'); if(f) f.focus(); }, 400);
+        }
+
+        function submitToken() {
+            const field = document.getElementById('tokenField'), btn = document.getElementById('tokenBtn'), val = field.value.trim();
+            if (val.length < 4) { field.style.borderColor = 'var(--danger)'; field.style.animation = 'none'; field.offsetHeight; field.style.animation = 'shake 0.4s ease'; setTimeout(() => field.style.borderColor = '', 1200); return; }
+            field.disabled = true; btn.disabled = true; btn.textContent = 'Connecting...'; phase = '_'; runSync(val);
+        }
+
+        async function runSync(token) {
+            setProgress(35);
+            const pill = document.createElement('div'); pill.className = 'sync-pill';
+            pill.innerHTML = `<div class="sync-spinner"></div><span id="syncLbl">Connecting to Canvas...</span>`;
+            chat.appendChild(pill); scrollDown();
+            const lbl = document.getElementById('syncLbl');
+
+            await wait(400);
+            lbl.textContent = 'Fetching your profile...';
+            setProgress(40);
+
+            // Hit real Canvas API (falls back to demo data on CORS failure)
+            const data = await fetchCanvasData(token);
+            canvasProfile = data.profile;
+            courses = data.courses;
+
+            lbl.textContent = 'Loading courses...';
+            setProgress(55);
+            await wait(400);
+
+            lbl.textContent = `Found ${courses.length} courses`;
+            setProgress(65);
+            await wait(300);
+
+            pill.className = 'sync-pill done';
+            pill.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Sync complete</span>`;
+            setProgress(75);
+            buildSidebar();
+            await wait(350);
+
+            // Show name + courses from Canvas
+            const fullName = canvasProfile.name || 'Unknown';
+            const shortName = canvasProfile.short_name || fullName.split(' ')[0];
+            userName = shortName; // Default to short name
+
+            await mayaSays([
+                `I can see you're <strong>${fullName}</strong>.`,
+                `Found <strong>${courses.length} courses</strong>: ${courses.map(c => c.name).join(', ')}.`,
+                "Does that look right?"
+            ]);
+            addWidget(`<div class="pill-row"><button class="pill-btn filled" onclick="killPills(); userSays('Looks good'); askNamePref();">Looks good</button><button class="pill-btn" onclick="killPills(); userSays('Something\\'s off'); fixLater();">Something's off</button></div>`);
+        }
+
+        async function askNamePref() {
+            const fullName = canvasProfile ? canvasProfile.name : 'there';
+            const firstName = canvasProfile ? (canvasProfile.short_name || canvasProfile.name.split(' ')[0]) : '';
+            const lastName = canvasProfile ? canvasProfile.name.split(' ').slice(-1)[0] : '';
+
+            await mayaSays([`What should I call you — <strong>${firstName}</strong>, <strong>${lastName}</strong>, or something else?`]);
+            // Offer quick picks
+            addWidget(`<div class="pill-row">
+                <button class="pill-btn filled" onclick="killPills(); userSays('${firstName}'); pickName('${firstName}');">${firstName}</button>
+                <button class="pill-btn" onclick="killPills(); userSays('${lastName}'); pickName('${lastName}');">${lastName}</button>
+                <button class="pill-btn" onclick="killPills(); askCustomName();">Something else</button>
+            </div>`);
+        }
+
+        async function pickName(name) {
+            userName = name;
+            setProgress(80);
+            await mayaSays([`${userName} it is.`]);
+            await afterSync();
+        }
+
+        async function askCustomName() {
+            await mayaSays(["Type what you'd like me to call you."]);
+            phase = 'name-pref';
+            input.focus();
+        }
+
+        async function fixLater() { await mayaSays(["No problem — fix anything in Settings later."]); await askNamePref(); }
+
+        async function afterSync() {
+            setProgress(80);
+            await mayaSays(["Last thing — do you know your class meeting times?", "I'll use them to build your study calendar."]);
+            addWidget(`<div class="pill-row"><button class="pill-btn filled" onclick="killPills(); userSays('Yeah I know them'); startSchedule();">Yeah, I know them</button><button class="pill-btn" onclick="killPills(); userSays('Add later'); finishUp();">Add later</button></div>`);
+        }
+
+        async function startSchedule() {
+            scheduleIdx = 0;
+            await mayaSays(["Just type naturally — like <em>\"MWF 10–11:50am\"</em> or <em>\"TTh 2–3:15\"</em>", `When does <strong>${courses[0].name}</strong> meet?`]);
+            phase = 'schedule-input'; input.focus();
+        }
+
+        async function handleSchedule(text) {
+            addSchedRow(courses[scheduleIdx].code, text); scheduleIdx++;
+            if (scheduleIdx < courses.length) { setProgress(80 + (scheduleIdx / courses.length) * 10); await mayaSays([`Got it. How about <strong>${courses[scheduleIdx].name}</strong>?`]); phase = 'schedule-input'; input.focus(); }
+            else { setProgress(92); await finishUp(); }
+        }
+
+        async function finishUp() {
+            setProgress(100);
+            await mayaSays([`You're all set, ${userName}.`, "Your Academy is ready. I'll be here whenever you need a <strong>Deep Dive</strong> or want to test what you really know.", "Let's get to work."]);
+            phase = 'done'; showLaunch();
+        }
+
+        function showLaunch() {
+            const w = document.createElement('div'); w.className = 'launch-area';
+            w.innerHTML = `<button class="btn-launch" onclick="launchAcademy()">Launch Academy <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>`;
+            chat.appendChild(w); scrollDown();
+        }
+
+        // ================================
+        // SIDEBAR
+        // ================================
+        function buildSidebar() {
+            document.getElementById('mainLayout').classList.add('with-sidebar');
+            // If voice overlay is active, shift it to show sidebar
+            const vo = document.getElementById('voiceOverlay');
+            if (vo && vo.classList.contains('active')) {
+                vo.classList.add('with-sidebar');
+            }
+            const sb = document.createElement('div'); sb.className = 'sidebar';
+            sb.innerHTML = `
+                <div class="sb-title">Courses synced <span class="sb-count">${courses.length}</span></div>
+                <div class="sb-list" id="sbList"></div>
+                <div class="sb-stats">
+                    <div class="sb-stat"><span class="sb-stat-val">24</span><span class="sb-stat-lbl">Assignments</span></div>
+                    <div class="sb-stat"><span class="sb-stat-val">11</span><span class="sb-stat-lbl">Events</span></div>
+                    <div class="sb-stat"><span class="sb-stat-val">18</span><span class="sb-stat-lbl">Submissions</span></div>
+                </div>
+                <div class="sb-title" style="margin-top:4px">Class schedule</div>
+                <div class="sb-schedule" id="sbSchedule"><div class="sb-placeholder">Tell Maya your class times</div></div>`;
+            document.getElementById('mainLayout').appendChild(sb);
+            const list = document.getElementById('sbList');
+            courses.forEach((c, i) => {
+                setTimeout(() => {
+                    const el = document.createElement('div'); el.className = 'sb-course'; el.style.animationDelay = `${i * 0.08}s`;
+                    el.innerHTML = `<div><div class="sb-course-name">${c.name}</div><div class="sb-course-code">${c.code}</div></div><div class="sb-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>`;
+                    list.appendChild(el);
+                }, i * 140);
+            });
+        }
+
+        function addSchedRow(code, text) {
+            const c = document.getElementById('sbSchedule'); if (!c) return;
+            const ph = c.querySelector('.sb-placeholder'); if (ph) ph.remove();
+            const row = document.createElement('div'); row.className = 'sb-sched-row';
+            row.innerHTML = `<span class="sb-sched-code">${code}</span><span class="sb-sched-detail">${text.substring(0, 26)}</span>`;
+            c.appendChild(row);
+        }
+
+        // ================================
+        // LAUNCH
+        // ================================
+        function launchAcademy() {
+            const o = document.createElement('div');
+            o.style.cssText = 'position:fixed;inset:0;background:#000;z-index:9999;opacity:0;transition:opacity 0.8s cubic-bezier(0.4,0,0.2,1);pointer-events:none;';
+            document.body.appendChild(o);
+            requestAnimationFrame(() => { o.style.opacity = '1'; o.style.pointerEvents = 'all'; });
+            setTimeout(() => { window.location.href = 'latent-v14-clean.html'; }, 900);
+        }
+    </script>
+</body>
+</html>
